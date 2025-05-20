@@ -8,20 +8,11 @@ import jakarta.persistence.Id;
 import java.util.Objects;
 
 @Entity
-public class Music {
-
+public class Playlist {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String title;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public Long getId() {
         return id;
@@ -31,11 +22,19 @@ public class Music {
         this.id = id;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Music music = (Music) o;
-        return Objects.equals(id, music.id) && Objects.equals(title, music.title);
+        Playlist playlist = (Playlist) o;
+        return Objects.equals(id, playlist.id) && Objects.equals(title, playlist.title);
     }
 
     @Override
