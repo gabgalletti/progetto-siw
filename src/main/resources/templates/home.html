@@ -5,6 +5,14 @@
     <title>Title</title>
 </head>
 <body>
-
+    <div class="navbar">
+        <span>Title</span>
+        <span th:if="${user}">
+            <a>Account</a>
+        </span>
+        <span th:unless="${user}">
+            <a>Login</a>
+        </span>
+    </div>
 </body>
 </html>

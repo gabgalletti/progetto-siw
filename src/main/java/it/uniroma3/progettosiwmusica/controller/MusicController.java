@@ -1,8 +1,24 @@
 package it.uniroma3.progettosiwmusica.controller;
 
+import it.uniroma3.progettosiwmusica.model.User;
+import it.uniroma3.progettosiwmusica.repository.MusicRepository;
+import it.uniroma3.progettosiwmusica.service.MusicService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class MusicController {
+    @Autowired private MusicService musicService;
+    Logger logger = LoggerFactory.getLogger(MusicController.class);
+
+    @GetMapping("/")
+    public String home(Model model) {
+        model.getAttribute("user");
+        return "home";
+    }
 
 }
