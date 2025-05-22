@@ -1,6 +1,7 @@
 package it.uniroma3.progettosiwmusica.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 import java.util.Objects;
