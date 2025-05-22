@@ -9,7 +9,13 @@ import org.springframework.stereotype.Service;
 public class ArtistService {
     @Autowired private ArtistRepository artistRepository;
 
-    public Artist getArtistById(Long id) {
+    public Artist getArtistById(long id) {
         return artistRepository.findById(id).get();
+    }
+    public Artist getArtistByName(String name) {
+        return artistRepository.findByName(name);
+    }
+    public Iterable<Artist> getAllArtist(){
+        return artistRepository.findAll();
     }
 }

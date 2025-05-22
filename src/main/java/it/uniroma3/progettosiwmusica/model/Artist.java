@@ -1,10 +1,8 @@
 package it.uniroma3.progettosiwmusica.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,9 +11,13 @@ public class Artist {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @NotBlank
     private String name;
-    private String surname;
-    private int yearOfBirth;
+
+    private String description;
+
+    @OneToMany
+    private List<Music> music;
 
     public Long getId() {
         return id;
@@ -33,31 +35,24 @@ public class Artist {
         this.name = name;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getDescription() {
+        return description;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public int getYearOfBirth() {
-        return yearOfBirth;
-    }
-
-    public void setYearOfBirth(int yearOfBirth) {
-        this.yearOfBirth = yearOfBirth;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Artist artist = (Artist) o;
-        return yearOfBirth == artist.yearOfBirth && Objects.equals(id, artist.id) && Objects.equals(name, artist.name) && Objects.equals(surname, artist.surname);
+        return Objects.equals(id, artist.id) && Objects.equals(name, artist.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, surname, yearOfBirth);
+        return Objects.hash(id, name);
     }
 }
