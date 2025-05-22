@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Aggiungi Musica</title>
+</head>
+<body>
+<h1>Carica una nuova traccia MP3</h1>
+<form method="POST" action="/upload-mp3" enctype="multipart/form-data">
+    <div>
+        <label for="titolo">Titolo:</label>
+        <input type="text" id="titolo" name="titolo" required>
+    </div>
+    <div>
+        <label for="artista">Artista:</label>
+        <input type="text" id="artista" name="artista" required>
+    </div>
+    <div>
+        <label for="fileMp3">Scegli il file MP3:</label>
+        <input type="file" id="fileMp3" name="fileMp3" accept=".mp3" required>
+    </div>
+    <button type="submit">Carica Musica</button>
+</form>
+</body>
+</html>
