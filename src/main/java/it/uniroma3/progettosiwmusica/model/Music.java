@@ -1,10 +1,9 @@
 package it.uniroma3.progettosiwmusica.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,7 +12,13 @@ public class Music {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @NotBlank
     private String title;
+
+    private String lyrics;
+    @ManyToMany
+    private List<Artist> artist;
 
     public String getTitle() {
         return title;
@@ -29,6 +34,14 @@ public class Music {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getLyrics() {
+        return lyrics;
+    }
+
+    public void setLyrics(String lyrics) {
+        this.lyrics = lyrics;
     }
 
     @Override
