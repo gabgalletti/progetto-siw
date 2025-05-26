@@ -1,10 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title th:text="${music != null && music.title != null ? music.title : 'Music Details'}">Music Title</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/> <!-- Esempio di CSS -->
 </head>
 <body>
+<header>
+    <h1>Music Details</h1>
+</header>
+
+<nav>
+    <a th:href="@{/home}">Home</a>
+    <a th:href="@{/music/all}">All Music</a>
+    <a th:href="@{/music/add}">Add New Music</a>
+</nav>
+
+<main>
+    <div th:if="${music != null}">
+        <h2 th:if="${music.title != null}" th:text="${music.title}">Music Title</h2>
+
+        <div th:if="${music.artists != null and not #lists.isEmpty(music.artists)}">
+            <h3>Artists:</h3>
+            <ul>
+                <li th:each="artist : ${music.artists}" th:text="${artist.name}">Artist Name</li>
+            </ul>
+        </div>
+
+        <div th:if="${music.lyrics != null and not #strings.isEmpty(music.lyrics)}">
+            <h3>Lyrics:</h3>
+            <pre th:text="${music.lyrics}">Lyrics here</pre>
+        </div>
+
+        <div th:if="${music.audioFilePath != null}">
+            <h3>Play Music:</h3>
+            <audio controls preload="metadata"> <!-- 'controls' per i comandi, 'preload' è opzionale -->
+                <source th:src="@{${music.audioFilePath}}" type="audio/mpeg"> <!-- Assumendo MP3, cambia type se necessario (es. audio/ogg, audio/wav) -->
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        <div th:if="${music.audioFilePath == null}">
+            <p>No audio file available for this music track.</p>
+        </div>
+    </div>
+    <div th:if="${music == null}">
+        <p>Music track not found.</p>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2025 Your Music App</p>
+</footer>
 
 </body>
 </html>

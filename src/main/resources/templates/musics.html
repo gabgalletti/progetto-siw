@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Musics</title>
+</head>
+<body>
+    <div>
+        <h1>Musics</h1>
+        <ul th:each="music: ${musics}">
+            <a th:href="@{/music/{id}(id = ${music.id})}" th:text="${music.title}">No Music</a>
+        </ul>
+    </div>
+</body>
+</html>

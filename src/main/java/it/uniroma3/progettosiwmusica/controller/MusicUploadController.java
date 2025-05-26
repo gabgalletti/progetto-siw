@@ -2,95 +2,112 @@ package it.uniroma3.progettosiwmusica.controller;
 
 import it.uniroma3.progettosiwmusica.model.Artist;
 import it.uniroma3.progettosiwmusica.model.Music;
+import it.uniroma3.progettosiwmusica.service.ArtistService;
+import it.uniroma3.progettosiwmusica.service.MusicService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes; // Per i messaggi di feedback
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Objects; // Per Objects.requireNonNull
 
 @Controller
 public class MusicUploadController {
+    @Autowired
+    private MusicService musicService;
+    @Autowired
+    private ArtistService artistService;
 
-    // Definisci la cartella dove salvare i file MP3.
-    // Assicurati che questa cartella esista e che l'applicazione abbia i permessi per scriverci.
-    // È consigliabile renderla configurabile tramite application.properties.
-    private static final String UPLOAD_DIR = "../../resources/uploads/audio_files/"; //cartella 'uploads/audio_files' nella root del progetto
+    // È buona pratica rendere il logger static final
+    private static final Logger logger = LoggerFactory.getLogger(MusicUploadController.class);
+    @Value("${upload.audio.dir://localhost:8080/uploads/audio_files}")
+    private String uploadDir;
 
-    @PostMapping("/formAddMusic")
-    public String handleFileUpload(@RequestParam("title") String title,
-                                   @RequestParam("artist") Artist artist,
-                                   @RequestParam("audioFile") MultipartFile file,
-                                   String lyrics,
-                                   RedirectAttributes redirectAttributes,
+
+
+    /**
+     * Mostra il form per caricare una nuova traccia musicale.
+     */
+    @GetMapping("/music/add")
+    public String showUploadForm(Model model) {
+        model.addAttribute("music", new Music());
+        model.addAttribute("artists", artistService.getAllArtist());
+        model.addAttribute("newArtist", new Artist());
+
+        return "formAddMusic";
+    }
+
+
+    /**
+     * Gestisce l'upload di una traccia musicale, assegna un nome dinamico
+     * (titolo_musicista-artista.estensione) e salva il file sul server.
+     */
+    @PostMapping("/music/add")
+    public String handleFileUpload(@RequestParam("audioFile") MultipartFile file,
+                                   @ModelAttribute("music") Music music,
+                                   @RequestParam(value = "artistName", required = false) String artistName,
                                    Model model) {
-
-        // 0. Creazione della directory di upload se non esiste
         try {
-            Path uploadPath = Paths.get(UPLOAD_DIR);
+            System.out.println("Inizio caricamento file e salvataggio musica");
+
+            // Logica per salvare il file
+            Path uploadPath = Paths.get(uploadDir);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-        } catch (IOException e) {
-            // Gestisci l'errore di creazione della directory
-            redirectAttributes.addFlashAttribute("errorMessage", "Error creating upload directory: " + e.getMessage());
-            return "redirect:/formAddMusic"; // o ricarica la pagina del form
-        }
 
-        // 1. Validazione base del file (es. non vuoto, tipo)
-        if (file.isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Please, select a file to upload.");
-            return "redirect:/formAddMusic"; // Ritorna alla pagina del form
-        }
-
-        // Verifica l'estensione del file (esempio base)
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".mp3") || !originalFilename.toLowerCase().endsWith(".wav") || !originalFilename.toLowerCase().endsWith(".ogg")) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Invalid format. Please upload a mp3, wav or ogg file.");
-            return "redirect:/formAddMusic";
-        }
-
-        try {
-            // 2. Ottieni il nome del file e costruisci il percorso di destinazione
-            // È una buona pratica generare un nome univoco per evitare sovrascritture o usare il nome originale con cautela
-            // Esempio con nome originale (potrebbe necessitare di sanificazione per caratteri speciali)
-            Path destinationFile = Paths.get(UPLOAD_DIR).resolve(
-                    Paths.get(Objects.requireNonNull(file.getOriginalFilename()))).normalize().toAbsolutePath();
-
-            // Assicurati che il percorso di destinazione sia all'interno della directory di upload consentita
-            // (prevenzione di attacchi di tipo "Path Traversal")
-            if (!destinationFile.getParent().equals(Paths.get(UPLOAD_DIR).toAbsolutePath())) {
-                redirectAttributes.addFlashAttribute("errorMessage", "Invalid path.");
-                return "redirect:/formAddMusic";
+            String originalFileName = file.getOriginalFilename();
+            String fileExtension = "";
+            if (originalFileName != null && originalFileName.contains(".")) {
+                fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
             }
 
-            // 3. Salva il file sul server
-            Files.copy(file.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
+            String cleanedTitle = music.getTitle().replaceAll("[^a-zA-Z0-9\\s]", "").replaceAll("\\s+", "_");
 
-            // 4. Qui potresti salvare le informazioni del file (titolo, artista, percorso del file) nel database
-            // Esempio: musicService.saveMusicMetadata(titolo, artista, destinationFile.toString());
+            if (artistName == null || artistName.isEmpty()) {
+                artistName = "unknown_artist"; // Nome predefinito in caso di valore nullo
+            }
 
-            redirectAttributes.addFlashAttribute("successMessage",
-                    " "+ file.getOriginalFilename() + "' successfully loaded as '" + title + "' by " + artist.getName() + "!");
-            Music music = new Music();
-            music.setTitle(title);
-            music.setLyrics(lyrics);
-            model.addAttribute("title",title);
+            String cleanedArtist = artistName.replaceAll("[^a-zA-Z0-9\\s]", "").replaceAll("\\s+", "_");
+            String fileName = cleanedTitle + "-" + cleanedArtist + fileExtension;
 
+            Path filePath = uploadPath.resolve(fileName);
+            while (Files.exists(filePath)) {
+                fileName = cleanedTitle + "-" + cleanedArtist + "-" + System.currentTimeMillis() + fileExtension;
+                filePath = uploadPath.resolve(fileName);
+            }
+
+            file.transferTo(filePath.toFile());
+            music.setAudioFilePath(fileName);
+
+            // Associa l'artista alla musica
+            Artist artist = artistService.getArtistByName(artistName);
+            if (artist == null) {
+                artist = new Artist();
+                artist.setName(artistName);
+                artistService.save(artist);
+            }
+            music.setArtist(artist);
+            System.out.println("Salvataggio musica nel database...");
+
+            // Salva la musica
+            musicService.save(music);
+            System.out.println("Musica salvata con successo!");
+
+            model.addAttribute("successMessage", "Audio caricato con successo!");
         } catch (IOException e) {
-            // Gestisci altre eccezioni di I/O
-            e.printStackTrace(); // Logga l'errore per debug
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error loading file: " + e.getMessage());
+            model.addAttribute("errorMessage", "Errore nel caricamento del file. Riprova.");
+            e.printStackTrace();
         }
 
-        return "redirect:/formMusicSuccess"; // O una pagina di successo
+        return "redirect:/music/add";
     }
+
 }
