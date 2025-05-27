@@ -27,6 +27,7 @@ public class Music {
 
 
     private String audioFilePath; // <<--- NOME CAMPO COERENTE
+    private String fileUrl;
 
     public String getTitle() {
         return title;
@@ -52,8 +53,8 @@ public class Music {
         this.lyrics = lyrics;
     }
 
-    public void setArtists(Artist artist) { // Setter per la lista di artisti
-        this.artist = artist;
+    public Artist getArtist(){
+        return artist;
     }
     public void setArtist(Artist artist){
         this.artist = artist;
@@ -91,4 +92,10 @@ public class Music {
     }
 
 
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
+    public String getFileUrl(){
+        return this.fileUrl;
+    }
 }

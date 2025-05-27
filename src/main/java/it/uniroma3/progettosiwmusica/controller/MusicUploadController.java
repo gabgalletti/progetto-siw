@@ -17,20 +17,27 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Controller
 public class MusicUploadController {
+
     @Autowired
     private MusicService musicService;
+
     @Autowired
     private ArtistService artistService;
 
-    // È buona pratica rendere il logger static final
+    // Logger static final
     private static final Logger logger = LoggerFactory.getLogger(MusicUploadController.class);
-    @Value("${upload.audio.dir://localhost:8080/uploads/audio_files}")
+
+    // Modifica: percorso fisico per upload
+    //@Value("${upload.audio.dir:uploads/audio_files}")
     private String uploadDir;
 
-
+    // URL base per accedere ai file caricati
+    //@Value("${upload.audio.url:/uploads/audio_files}")
+    private String uploadUrl;
 
     /**
      * Mostra il form per caricare una nuova traccia musicale.
@@ -40,10 +47,8 @@ public class MusicUploadController {
         model.addAttribute("music", new Music());
         model.addAttribute("artists", artistService.getAllArtist());
         model.addAttribute("newArtist", new Artist());
-
         return "formAddMusic";
     }
-
 
     /**
      * Gestisce l'upload di una traccia musicale, assegna un nome dinamico
@@ -52,62 +57,54 @@ public class MusicUploadController {
     @PostMapping("/music/add")
     public String handleFileUpload(@RequestParam("audioFile") MultipartFile file,
                                    @ModelAttribute("music") Music music,
-                                   @RequestParam(value = "artistName", required = false) String artistName,
+                                   @RequestParam(value = "newArtist", required = false) Artist newArtist,
+                                   @ModelAttribute("name") String name,
                                    Model model) {
+
+
         try {
-            System.out.println("Inizio caricamento file e salvataggio musica");
+            // Controlla se newArtist è nullo e assegna un nome alternativo
+            String artistName = (newArtist != null && newArtist.getName() != null)
+                    ? newArtist.getName().replaceAll("\\s+", "_")
+                    : "unknownartist";
 
-            // Logica per salvare il file
-            Path uploadPath = Paths.get(uploadDir);
+            // Genera il nome del file dinamico
+            String filename = String.format("%s-%s.%s",
+                    music.getTitle().replaceAll("\\s+", "_"),
+                    artistName,
+                    file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1));
+
+
+            // Crea il percorso fisico per salvare il file
+            Path uploadPath = Paths.get("C:\\Users\\Gabriele\\Desktop\\progetto-siw\\src\\main\\resources\\static\\uploads\\audio_files");
             if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+                Files.createDirectories(uploadPath); // Crea directory se non esiste
+            }
+            Path filePath = uploadPath.resolve(filename);
+            file.transferTo(filePath.toFile()); // Salva il file
+            music.setAudioFilePath(filePath.toString());
+            // Imposta il percorso accessibile da Internet
+            String fileUrl = String.format("%s/%s", this.uploadUrl, filename); // Usa uploadUrl per generare URL pubblico
+            music.setFileUrl(fileUrl); // Salva l'URL nel modello dell'entità Music
+
+            // Salva l'artista associato
+            if (newArtist != null) {
+                artistService.save(newArtist);
+                music.setArtist(newArtist);
+            } else if (name != null) {
+                music.setArtist(artistService.getArtistByName(name));
             }
 
-            String originalFileName = file.getOriginalFilename();
-            String fileExtension = "";
-            if (originalFileName != null && originalFileName.contains(".")) {
-                fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-            }
-
-            String cleanedTitle = music.getTitle().replaceAll("[^a-zA-Z0-9\\s]", "").replaceAll("\\s+", "_");
-
-            if (artistName == null || artistName.isEmpty()) {
-                artistName = "unknown_artist"; // Nome predefinito in caso di valore nullo
-            }
-
-            String cleanedArtist = artistName.replaceAll("[^a-zA-Z0-9\\s]", "").replaceAll("\\s+", "_");
-            String fileName = cleanedTitle + "-" + cleanedArtist + fileExtension;
-
-            Path filePath = uploadPath.resolve(fileName);
-            while (Files.exists(filePath)) {
-                fileName = cleanedTitle + "-" + cleanedArtist + "-" + System.currentTimeMillis() + fileExtension;
-                filePath = uploadPath.resolve(fileName);
-            }
-
-            file.transferTo(filePath.toFile());
-            music.setAudioFilePath(fileName);
-
-            // Associa l'artista alla musica
-            Artist artist = artistService.getArtistByName(artistName);
-            if (artist == null) {
-                artist = new Artist();
-                artist.setName(artistName);
-                artistService.save(artist);
-            }
-            music.setArtist(artist);
-            System.out.println("Salvataggio musica nel database...");
-
-            // Salva la musica
+            // Salva l'entità Music
             musicService.save(music);
-            System.out.println("Musica salvata con successo!");
 
-            model.addAttribute("successMessage", "Audio caricato con successo!");
+            logger.info("Upload riuscito: {}", fileUrl);
+            model.addAttribute("successMessage", "Caricamento riuscito!");
         } catch (IOException e) {
-            model.addAttribute("errorMessage", "Errore nel caricamento del file. Riprova.");
-            e.printStackTrace();
+            logger.error("Errore durante il caricamento del file: ", e);
+            model.addAttribute("errorMessage", "Errore durante il caricamento del file.");
         }
 
-        return "redirect:/music/add";
+        return "formAddMusic"; // Torna alla pagina del form
     }
-
 }

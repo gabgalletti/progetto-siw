@@ -20,10 +20,10 @@
     <div th:if="${music != null}">
         <h2 th:if="${music.title != null}" th:text="${music.title}">Music Title</h2>
 
-        <div th:if="${music.artists != null and not #lists.isEmpty(music.artists)}">
-            <h3>Artists:</h3>
+        <div th:if="${music.artist != null}">
+            <h3>Artist:</h3>
             <ul>
-                <li th:each="artist : ${music.artists}" th:text="${artist.name}">Artist Name</li>
+                <li th:text="${music.artist.name}">Artist Name</li>
             </ul>
         </div>
 
@@ -35,7 +35,13 @@
         <div th:if="${music.audioFilePath != null}">
             <h3>Play Music:</h3>
             <audio controls preload="metadata"> <!-- 'controls' per i comandi, 'preload' è opzionale -->
-                <source th:src="@{${music.audioFilePath}}" type="audio/mpeg"> <!-- Assumendo MP3, cambia type se necessario (es. audio/ogg, audio/wav) -->
+                <!-- Fonte per file MP3 -->
+                <source th:src="${music.audioFilePath}" type="audio/mpeg">
+                <!-- Fonte per file WAV -->
+                <source th:src="${music.audioFilePath}" type="audio/wav">
+                <!-- Fonte per file OGG -->
+                <source th:src="${music.audioFilePath}" type="audio/ogg">
+
                 Your browser does not support the audio element.
             </audio>
         </div>
