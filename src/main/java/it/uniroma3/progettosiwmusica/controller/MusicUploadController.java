@@ -4,6 +4,7 @@ import it.uniroma3.progettosiwmusica.model.Artist;
 import it.uniroma3.progettosiwmusica.model.Music;
 import it.uniroma3.progettosiwmusica.service.ArtistService;
 import it.uniroma3.progettosiwmusica.service.MusicService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,26 +58,24 @@ public class MusicUploadController {
     @PostMapping("/music/add")
     public String handleFileUpload(@RequestParam("audioFile") MultipartFile file,
                                    @ModelAttribute("music") Music music,
-                                   @RequestParam(value = "newArtist", required = false) Artist newArtist,
-                                   @ModelAttribute("name") String name,
+                                   @ModelAttribute("newArtist") Artist newArtist,
                                    Model model) {
 
 
         try {
             // Controlla se newArtist è nullo e assegna un nome alternativo
             String artistName = (newArtist != null && newArtist.getName() != null)
-                    ? newArtist.getName().replaceAll("\\s+", "_")
+                    ? (newArtist.getName())
                     : "unknownartist";
 
             // Genera il nome del file dinamico
-            String filename = String.format("%s-%s.%s",
-                    music.getTitle().replaceAll("\\s+", "_"),
-                    artistName,
+            String filename = String.format("%s.%s",
+                    artistName+ "-" + music.getTitle(),
                     file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1));
 
 
             // Crea il percorso fisico per salvare il file
-            Path uploadPath = Paths.get("C:\\Users\\Gabriele\\Desktop\\progetto-siw\\src\\main\\resources\\static\\uploads\\audio_files");
+            Path uploadPath = Paths.get("C:\\Users\\Gabriele\\IdeaProjects\\Progetto Siw musica\\src\\main\\resources\\static\\uploads\\audio_files");
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath); // Crea directory se non esiste
             }
@@ -91,8 +90,8 @@ public class MusicUploadController {
             if (newArtist != null) {
                 artistService.save(newArtist);
                 music.setArtist(newArtist);
-            } else if (name != null) {
-                music.setArtist(artistService.getArtistByName(name));
+            } else if (newArtist.getName() != null) {
+                music.setArtist(newArtist);
             }
 
             // Salva l'entità Music
