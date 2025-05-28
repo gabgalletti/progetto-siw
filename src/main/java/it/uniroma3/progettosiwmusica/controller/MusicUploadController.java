@@ -47,7 +47,7 @@ public class MusicUploadController {
     @GetMapping("/music/add")
     public String showUploadForm(Model model) {
         model.addAttribute("music", new Music());
-        model.addAttribute("artists", artistService.getAllArtist());
+        model.addAttribute("artists", artistService.getAllArtists());
         model.addAttribute("newArtist", new Artist());
         return "formAddMusic";
     }

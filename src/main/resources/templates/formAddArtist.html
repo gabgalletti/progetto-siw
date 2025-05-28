@@ -1,10 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Aggiungi Artista</title>
 </head>
 <body>
+<h1>Aggiungi Nuovo Artista</h1>
+
+<!--
+    L'attributo th:action deve puntare all'URL del controller
+    che gestirà il salvataggio dell'artista (metodo POST).
+    Ad esempio, se hai un metodo @PostMapping("/artists") nel tuo ArtistController,
+    allora th:action="@{/artists}".
+    L'oggetto "artist" è quello che hai aggiunto al model nel tuo ArtistController.
+-->
+<form th:action="@{/artists}" th:object="${artist}" method="post">
+    <div>
+        <label for="name">Nome:</label>
+        <input type="text" id="name" th:field="*{name}" />
+    </div>
+    <div>
+        <label for="description">Descrizione:</label>
+        <textarea id="description" th:field="*{description}"></textarea>
+    </div>
+    <div>
+        <button type="submit">Salva</button>
+    </div>
+</form>
 
 </body>
 </html>
