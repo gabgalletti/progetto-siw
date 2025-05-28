@@ -22,7 +22,10 @@ public class ArtistService {
     public Artist getArtistByName(String name) {
         return artistRepository.findByName(name);
     }
-    public Iterable<Artist> getAllArtist(){
+    public Iterable<Artist> getAllArtists(){
         return artistRepository.findAll();
+    }
+    public void deleteArtist(Artist artist){
+        artistRepository.delete(artist);
     }
 }
