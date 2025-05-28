@@ -1,24 +1,138 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Aggiungi Musica</title>
+    <title>Add New Music</title>
+    <style>
+        .error { color: red; }
+        .success { color: green; }
+        #newArtistFields { display: none; } /* Nasconde i campi del nuovo artista inizialmente */
+    </style>
 </head>
 <body>
-<h1>Carica una nuova traccia MP3</h1>
-<form method="POST" action="/upload-mp3" enctype="multipart/form-data">
+<h1>Add New Music</h1>
+
+<!-- Messaggi di feedback -->
+<div th:if="${errorMessage}" class="error">
+    <p th:text="${errorMessage}"></p>
+</div>
+<div th:if="${successMessage}" class="success">
+    <p th:text="${successMessage}"></p>
+</div>
+
+<form th:action="@{/music/add}" method="post" enctype="multipart/form-data" th:object="${music}">
+
+    <!-- Campi Musica -->
     <div>
-        <label for="titolo">Titolo:</label>
-        <input type="text" id="titolo" name="titolo" required>
+        <label for="title">Title:</label>
+        <input type="text" id="title" th:field="*{title}" required>
+        <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error"></span>
     </div>
     <div>
-        <label for="artista">Artista:</label>
-        <input type="text" id="artista" name="artista" required>
+        <label for="lyrics">Lyrics:</label>
+        <textarea id="lyrics" th:field="*{lyrics}"></textarea>
+        <span th:if="${#fields.hasErrors('lyrics')}" th:errors="*{lyrics}" class="error"></span>
     </div>
     <div>
-        <label for="fileMp3">Scegli il file MP3:</label>
-        <input type="file" id="fileMp3" name="fileMp3" accept=".mp3" required>
+        <label for="audioFile">Audio File (MP3, WAV, OGG):</label>
+        <input type="file" id="audioFile" name="audioFile" accept=".mp3,.wav,.ogg" required>
     </div>
-    <button type="submit">Carica Musica</button>
+
+    <hr>
+
+    <!-- Selezione/Aggiunta Artista -->
+    <h2>Artist</h2>
+
+    <div>
+        <input type="checkbox" id="addNewArtistCheckbox" name="addNewArtist" value="true">
+        <label for="addNewArtistCheckbox">Add New Artist</label>
+    </div>
+
+    <!-- Sezione per selezionare artista esistente -->
+    <div id="existingArtistFields">
+        <label for="selectedArtistId">Select Existing Artist:</label>
+        <select id="selectedArtistId" name="selectedArtistId">
+            <option value="">-- Select an Artist --</option>
+            <option th:each="artist : ${artists}"
+                    th:value="${artist.id}"
+                    th:text="${artist.name}">Artist Name</option>
+        </select>
+        <!-- Potresti aggiungere qui un campo di ricerca con JS -->
+    </div>
+
+    <!-- Sezione per aggiungere nuovo artista (inizialmente nascosta) -->
+    <div id="newArtistFields" th:object="${newArtist}">
+        <h3>New Artist Details</h3>
+        <div>
+            <label for="newArtistName">Name:</label>
+            <input type="text" id="newArtistName" th:field="*{name}">
+            <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></span>
+        </div>
+        <div>
+            <label for="newArtistDescription">Description:</label>
+            <textarea id="newArtistDescription" th:field="*{description}"></textarea>
+            <span th:if="${#fields.hasErrors('description')}" th:errors="*{newArtist.description}" class="error"></span>
+        </div>
+    </div>
+
+    <br>
+
+    <div>
+        <button type="submit">Add Music</button>
+    </div>
 </form>
+
+<script>
+    // Script per mostrare/nascondere i campi del nuovo artista
+    const addNewArtistCheckbox = document.getElementById('addNewArtistCheckbox');
+    const existingArtistFields = document.getElementById('existingArtistFields');
+    const newArtistFields = document.getElementById('newArtistFields');
+    const selectedArtistSelect = document.getElementById('selectedArtistId');
+    const newArtistNameInput = document.getElementById('newArtistName');
+    const newArtistDescriptionInput = document.getElementById('newArtistDescription');
+
+
+    addNewArtistCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            existingArtistFields.style.display = 'none';
+            newArtistFields.style.display = 'block';
+            // Rendi i campi del nuovo artista richiesti e disabilita la selezione esistente
+            selectedArtistSelect.removeAttribute('required');
+            selectedArtistSelect.disabled = true;
+            newArtistNameInput.setAttribute('required', 'required');
+            // newArtistDescriptionInput non è @NotBlank, quindi non lo rendiamo required qui
+        } else {
+            existingArtistFields.style.display = 'block';
+            newArtistFields.style.display = 'none';
+            // Rendi la selezione esistente richiesta e disabilita i campi del nuovo artista
+            selectedArtistSelect.setAttribute('required', 'required');
+            selectedArtistSelect.disabled = false;
+            newArtistNameInput.removeAttribute('required');
+            // Pulisci i valori dei campi del nuovo artista quando vengono nascosti
+            newArtistNameInput.value = '';
+            newArtistDescriptionInput.value = '';
+        }
+    });
+
+    // Imposta lo stato iniziale in base al valore di default della checkbox (se presente)
+    // Questo è utile se il form viene ri-mostrato a causa di errori di validazione
+    document.addEventListener('DOMContentLoaded', function() {
+        if (addNewArtistCheckbox.checked) {
+            existingArtistFields.style.display = 'none';
+            newArtistFields.style.display = 'block';
+            selectedArtistSelect.removeAttribute('required');
+            selectedArtistSelect.disabled = true;
+            newArtistNameInput.setAttribute('required', 'required');
+        } else {
+            existingArtistFields.style.display = 'block';
+            newArtistFields.style.display = 'none';
+            selectedArtistSelect.setAttribute('required', 'required');
+            selectedArtistSelect.disabled = false;
+            newArtistNameInput.removeAttribute('required');
+        }
+    });
+
+
+</script>
+
 </body>
 </html>

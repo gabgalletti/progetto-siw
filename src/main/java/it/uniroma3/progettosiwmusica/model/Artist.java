@@ -3,6 +3,7 @@ package it.uniroma3.progettosiwmusica.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.ArrayList; // <<--- AGGIUNGI QUESTO IMPORT
 import java.util.List;
 import java.util.Objects;
 
@@ -15,10 +16,14 @@ public class Artist {
     @NotBlank
     private String name;
 
+    @Column(columnDefinition = "TEXT") // Buono per testi lunghi se necessario
     private String description;
 
-    @OneToMany
-    private List<Music> music;
+    // Artist è il LATO INVERSE (non proprietario) della relazione ManyToMany
+    // "artists" è il nome del campo List<Artist> artists in Music.java
+    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Music> musics = new ArrayList<>();
+
 
     public Long getId() {
         return id;
@@ -44,16 +49,34 @@ public class Artist {
         this.description = description;
     }
 
+    public List<Music> getMusic() {
+        return musics;
+    }
+
+    public void setMusic(List<Music> musics) {
+        this.musics = musics;
+    }
+
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true; // Aggiunto
         if (o == null || getClass() != o.getClass()) return false;
         Artist artist = (Artist) o;
-        return Objects.equals(id, artist.id) && Objects.equals(name, artist.name);
+        if (id != null && artist.id != null) {
+            return Objects.equals(id, artist.id);
+        }
+        // L'implementazione originale con id e name è accettabile,
+        // ma basarsi solo sull'ID (se non nullo) è più comune per entità JPA.
+        // Se usi name, assicurati che sia univoco o che la logica di business lo gestisca.
+        return Objects.equals(name, artist.name); // Fallback se gli ID sono null
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        if (id != null) {
+            return Objects.hash(id);
+        }
+        return Objects.hash(name); // Fallback
     }
 }
