@@ -60,8 +60,8 @@ public class MusicUploadController {
     public String handleFileUpload(@RequestParam("audioFile") MultipartFile file,
                                    @ModelAttribute("music") Music music,
                                    @RequestParam(value = "selectedArtistId", required = false) Long selectedArtistId,
-                                   @RequestParam(value = "nameNewArtist", required = false) String newArtistName,
-                                   @RequestParam(value = "descriptionNewArtist", required = false) String newArtistDescription,
+                                   @RequestParam(value = "newArtistName", required = false) String newArtistName,
+                                   @RequestParam(value = "newArtistDescription", required = false) String newArtistDescription,
                                    Model model) {
 
         String artistName = "unknownartist";
