@@ -36,11 +36,11 @@
             <h3>Play Music:</h3>
             <audio controls preload="metadata"> <!-- 'controls' per i comandi, 'preload' è opzionale -->
                 <!-- Fonte per file MP3 -->
-                <source th:src="${music.audioFilePath}" type="audio/mpeg">
+                <source th:src="${music.fileUrl}" type="audio/mpeg">
                 <!-- Fonte per file WAV -->
-                <source th:src="${music.audioFilePath}" type="audio/wav">
+                <source th:src="${music.fileUrl}" type="audio/wav">
                 <!-- Fonte per file OGG -->
-                <source th:src="${music.audioFilePath}" type="audio/ogg">
+                <source th:src="${music.fileUrl}" type="audio/ogg">
 
                 Your browser does not support the audio element.
             </audio>

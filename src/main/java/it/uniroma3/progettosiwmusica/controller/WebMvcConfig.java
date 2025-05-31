@@ -17,7 +17,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Mappa l'URL configurato alla directory fisica
-        registry.addResourceHandler(uploadUrl + "/**")
-                .addResourceLocations("file:" + uploadDir + "/");
+        registry.addResourceHandler("/audio-files/**")
+                .addResourceLocations("file:C:/Users/Gabriele/Desktop/uploads/audio-files/");
     }
 }
