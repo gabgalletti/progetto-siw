@@ -49,11 +49,11 @@ public class Artist {
         this.description = description;
     }
 
-    public List<Music> getMusic() {
+    public List<Music> getMusics() {
         return musics;
     }
 
-    public void setMusic(List<Music> musics) {
+    public void setMusics(List<Music> musics) {
         this.musics = musics;
     }
 

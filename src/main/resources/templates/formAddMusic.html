@@ -60,17 +60,17 @@
     </div>
 
     <!-- Sezione per aggiungere nuovo artista (inizialmente nascosta) -->
-    <div id="newArtistFields" th:object="${newArtist}">
+    <div id="newArtist" th:object="${newArtist}">
         <h3>New Artist Details</h3>
         <div>
-            <label for="newArtistName">Name:</label>
-            <input type="text" id="newArtistName" th:field="*{name}">
+            <label for="name">Name:</label>
+            <input type="text" id="name" th:field="*{name}">
             <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></span>
         </div>
         <div>
-            <label for="newArtistDescription">Description:</label>
-            <textarea id="newArtistDescription" th:field="*{description}"></textarea>
-            <span th:if="${#fields.hasErrors('description')}" th:errors="*{newArtist.description}" class="error"></span>
+            <label for="description">Description:</label>
+            <textarea id="description" th:field="*{description}"></textarea>
+            <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error"></span>
         </div>
     </div>
 

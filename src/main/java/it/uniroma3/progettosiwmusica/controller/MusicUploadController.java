@@ -4,7 +4,6 @@ import it.uniroma3.progettosiwmusica.model.Artist;
 import it.uniroma3.progettosiwmusica.model.Music;
 import it.uniroma3.progettosiwmusica.service.ArtistService;
 import it.uniroma3.progettosiwmusica.service.MusicService;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class MusicUploadController {
@@ -59,32 +57,36 @@ public class MusicUploadController {
     @PostMapping("/music/add")
     public String handleFileUpload(@RequestParam("audioFile") MultipartFile file,
                                    @ModelAttribute("music") Music music,
-                                   @RequestParam(value = "selectedArtistId", required = false) Long selectedArtistId,
-                                   @RequestParam(value = "newArtistName", required = false) String newArtistName,
-                                   @RequestParam(value = "newArtistDescription", required = false) String newArtistDescription,
+                                   @ModelAttribute(value = "newArtist") Artist newArtist,
+                                   @ModelAttribute("name") String name,
                                    Model model) {
 
-        String artistName = "unknownartist";
-        Artist newArtist = null;
+
         try {
-            if(newArtistName != null && newArtistDescription != null) {
-                artistName = newArtistName;
-                newArtist.setName(newArtistName);
-                newArtist.setDescription(newArtistDescription);
-            } else if(selectedArtistId != null) {
-                Optional<Artist> artistTemp = artistService.getArtistById(selectedArtistId);
-                artistName = artistTemp.get().getName();
+            if(artistService.getArtistByName(name) == null) {
+                newArtist.setName(name);
+
             }
+
+            // Controlla se newArtist è nullo e assegna un nome alternativo
+            String artistName = "unknownartist";
+
+
+            if(newArtist.getName() != null)
+                artistName = newArtist.getName();
+            else if(name != null)
+                artistName = name;
 
 
             // Genera il nome del file dinamico
-            String filename = String.format("%s.%s",
-                    artistName+ "-" + music.getTitle(),
+            String filename = String.format("%s-%s.%s",
+                    music.getTitle(),
+                    artistName,
                     file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1));
 
 
             // Crea il percorso fisico per salvare il file
-            Path uploadPath = Paths.get("C:\\Users\\Gabriele\\IdeaProjects\\Progetto Siw musica\\src\\main\\resources\\static\\uploads\\audio_files");
+            Path uploadPath = Paths.get("C:/Users/Gabriele/Desktop/uploads/audio-files/");
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath); // Crea directory se non esiste
             }
@@ -92,19 +94,17 @@ public class MusicUploadController {
             file.transferTo(filePath.toFile()); // Salva il file
             music.setAudioFilePath(filePath.toString());
             // Imposta il percorso accessibile da Internet
-            String fileUrl = String.format("%s/%s", this.uploadUrl, filename); // Usa uploadUrl per generare URL pubblico
-            music.setFileUrl(fileUrl); // Salva l'URL nel modello dell'entità Music
+            String fileUrl = String.format("/audio-files/%s", filename); // Usa uploadUrl per generare URL pubblico
+            music.setFileUrl(fileUrl); // Salva l'URL nel modello dell'entità Musica
 
-            // Salva l'artista associato
-            if (newArtist != null && newArtist.getName() != null) {
+            if(newArtist.getName() != null){
+                newArtist.getMusics().add(music);
                 artistService.save(newArtist);
                 music.setArtist(newArtist);
-            } else if (selectedArtistId != null) {
-                music.setArtist(artistService.getArtistById(selectedArtistId).get());
             }
-
             // Salva l'entità Music
             musicService.save(music);
+
 
             logger.info("Upload riuscito: {}", fileUrl);
             model.addAttribute("successMessage", "Caricamento riuscito!");
