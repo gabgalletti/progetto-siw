@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class MusicUploadController {
@@ -57,32 +58,36 @@ public class MusicUploadController {
     @PostMapping("/music/add")
     public String handleFileUpload(@RequestParam("audioFile") MultipartFile file,
                                    @ModelAttribute("music") Music music,
+                                   @RequestParam(value = "selectedArtistId", required = false) Long selectedArtistId,
                                    @ModelAttribute(value = "newArtist") Artist newArtist,
                                    @ModelAttribute("name") String name,
                                    Model model) {
 
 
         try {
-            if(artistService.getArtistByName(name) == null) {
+            String artistName = "unknownartist";
+            if(selectedArtistId == null) {
                 newArtist.setName(name);
 
+            } else {
+                Optional<Artist> artist = (artistService.getArtistById(selectedArtistId));
+                if (artist.isPresent()) {
+                    music.setArtist(artist.get());
+                }
             }
 
             // Controlla se newArtist è nullo e assegna un nome alternativo
-            String artistName = "unknownartist";
 
 
-            if(newArtist.getName() != null)
+
+            if(selectedArtistId == null)
                 artistName = newArtist.getName();
-            else if(name != null)
-                artistName = name;
+            else
+                artistName = artistService.getArtistById(selectedArtistId).get().getName();
 
 
             // Genera il nome del file dinamico
-            String filename = String.format("%s-%s.%s",
-                    music.getTitle(),
-                    artistName,
-                    file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1));
+            String filename = String.format("%s-%s.%s", music.getTitle(), artistName, file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1));
 
 
             // Crea il percorso fisico per salvare il file
@@ -94,13 +99,16 @@ public class MusicUploadController {
             file.transferTo(filePath.toFile()); // Salva il file
             music.setAudioFilePath(filePath.toString());
             // Imposta il percorso accessibile da Internet
-            String fileUrl = String.format("/audio-files/%s", filename); // Usa uploadUrl per generare URL pubblico
-            music.setFileUrl(fileUrl); // Salva l'URL nel modello dell'entità Musica
+            String fileUrl = String.format("/audio-files/%s", filename);
+            music.setFileUrl(fileUrl);
 
-            if(newArtist.getName() != null){
-                newArtist.getMusics().add(music);
+            if(selectedArtistId == null){
                 artistService.save(newArtist);
-                music.setArtist(newArtist);
+                newArtist.getMusics().add(music);
+                music.setArtist(artistService.getArtistById(newArtist.getId()).get());
+            } else {
+                artistService.getArtistById(selectedArtistId).get().getMusics().add(music);
+                music.setArtist(artistService.getArtistById(selectedArtistId).get());
             }
             // Salva l'entità Music
             musicService.save(music);

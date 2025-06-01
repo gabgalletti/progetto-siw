@@ -2,18 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${artist.name} ?: 'Dettaglio Artista'">Dettaglio Artista</title>
+    <title id="artistName" th:object="${artist}" th:text="${name}">Dettaglio Artista</title>
 </head>
 <body>
 <div th:if="${artist != null}">
     <h1 th:text="${artist.name}">Nome Artista</h1>
-    <p><strong>ID:</strong> <span th:text="${artist.id}"></span></p>
     <div th:if="${artist.description != null && !artist.description.isEmpty()}">
         <p><strong>Descrizione:</strong></p>
         <p th:text="${artist.description}">Descrizione dell'artista...</p>
     </div>
     <div th:if="${artist.description == null || artist.description.isEmpty()}">
         <p>Nessuna descrizione disponibile per questo artista.</p>
+    </div>
+    <div th:if="${artist.musics != null}">
+        <div th:each="music : ${artist.musics}">
+            <a th:text="${music.title}" th:href="@{'/music/' + ${music.id}}">musica</a>
+        </div>
     </div>
 </div>
 <div th:if="${artist == null}">
