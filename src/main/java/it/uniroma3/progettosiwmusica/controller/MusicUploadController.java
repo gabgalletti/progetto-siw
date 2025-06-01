@@ -66,7 +66,7 @@ public class MusicUploadController {
 
         try {
             String artistName = "unknownartist";
-            if(artistService.getArtistById(selectedArtistId).get() == null) {
+            if(selectedArtistId == null) {
                 newArtist.setName(name);
 
             } else {
@@ -80,9 +80,9 @@ public class MusicUploadController {
 
 
 
-            if(artistService.getArtistById(selectedArtistId) == null && newArtist.getName() != null)
+            if(selectedArtistId == null)
                 artistName = newArtist.getName();
-            else if(artistService.getArtistById(selectedArtistId) != null)
+            else
                 artistName = artistService.getArtistById(selectedArtistId).get().getName();
 
 
@@ -102,7 +102,7 @@ public class MusicUploadController {
             String fileUrl = String.format("/audio-files/%s", filename); // Usa uploadUrl per generare URL pubblico
             music.setFileUrl(fileUrl); // Salva l'URL nel modello dell'entità Musica
 
-            if(artistService.getArtistById(selectedArtistId) == null){
+            if(selectedArtistId == null){
                 artistService.save(newArtist);
                 newArtist.getMusics().add(music);
                 music.setArtist(artistService.getArtistById(newArtist.getId()).get());
