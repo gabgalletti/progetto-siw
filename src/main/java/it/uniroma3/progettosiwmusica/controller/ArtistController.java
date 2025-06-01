@@ -34,10 +34,12 @@ public class ArtistController {
     public String getArtist(@PathVariable("id") Long id, Model model) {
         Optional<Artist> artist = this.artistService.getArtistById(id);
         if (artist.isPresent()) {
-            model.addAttribute("artist", artist);
-            return "artist";
+            model.addAttribute("artist", artist.get());
         }
-        return "redirect:/artists";
+        else{
+            model.addAttribute("artist", null);
+        }
+        return "artist";
     }
 
     @PostMapping("/artists")
