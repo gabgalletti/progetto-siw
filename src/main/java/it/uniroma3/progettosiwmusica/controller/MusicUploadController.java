@@ -99,8 +99,8 @@ public class MusicUploadController {
             file.transferTo(filePath.toFile()); // Salva il file
             music.setAudioFilePath(filePath.toString());
             // Imposta il percorso accessibile da Internet
-            String fileUrl = String.format("/audio-files/%s", filename); // Usa uploadUrl per generare URL pubblico
-            music.setFileUrl(fileUrl); // Salva l'URL nel modello dell'entità Musica
+            String fileUrl = String.format("/audio-files/%s", filename);
+            music.setFileUrl(fileUrl);
 
             if(selectedArtistId == null){
                 artistService.save(newArtist);
