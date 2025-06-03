@@ -48,6 +48,7 @@ public class MusicUploadController {
         model.addAttribute("music", new Music());
         model.addAttribute("artists", artistService.getAllArtists());
         model.addAttribute("newArtist", new Artist());
+        model.addAttribute("name", "");
         return "formAddMusic";
     }
 
@@ -99,8 +100,8 @@ public class MusicUploadController {
             file.transferTo(filePath.toFile()); // Salva il file
             music.setAudioFilePath(filePath.toString());
             // Imposta il percorso accessibile da Internet
-            String fileUrl = String.format("/audio-files/%s", filename);
-            music.setFileUrl(fileUrl);
+            String fileUrl = String.format("/audio-files/%s", filename); // Usa uploadUrl per generare URL pubblico
+            music.setFileUrl(fileUrl); // Salva l'URL nel modello dell'entità Musica
 
             if(selectedArtistId == null){
                 artistService.save(newArtist);

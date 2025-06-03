@@ -1,5 +1,6 @@
 package it.uniroma3.progettosiwmusica.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -21,6 +22,7 @@ public class Artist {
 
     // Artist è il LATO INVERSE (non proprietario) della relazione ManyToMany
     // "artists" è il nome del campo List<Artist> artists in Music.java
+    @JsonIgnore
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Music> musics = new ArrayList<>();
 

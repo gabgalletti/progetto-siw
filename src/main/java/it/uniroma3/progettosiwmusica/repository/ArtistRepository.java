@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ArtistRepository extends CrudRepository<Artist, Long> {
     public Artist findByName(String name);
+    List<Artist> findByNameContainingIgnoreCase(String name);
+
 }
