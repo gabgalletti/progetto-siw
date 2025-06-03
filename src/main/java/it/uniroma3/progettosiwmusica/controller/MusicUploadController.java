@@ -48,6 +48,7 @@ public class MusicUploadController {
         model.addAttribute("music", new Music());
         model.addAttribute("artists", artistService.getAllArtists());
         model.addAttribute("newArtist", new Artist());
+        model.addAttribute("name", "");
         return "formAddMusic";
     }
 

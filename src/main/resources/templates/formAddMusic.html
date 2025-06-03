@@ -39,100 +39,92 @@
 
     <hr>
 
-    <!-- Selezione/Aggiunta Artista -->
-    <h2>Artist</h2>
+    <h2>Search Artist</h2>
 
+    <!-- Barra di ricerca -->
     <div>
-        <input type="checkbox" id="addNewArtistCheckbox" name="addNewArtist" value="true">
-        <label for="addNewArtistCheckbox">Add New Artist</label>
+        <label for="artistSearch">Search Artist by Name:</label>
+        <input type="text" id="artistSearch" placeholder="Type to search artist...">
     </div>
 
-    <!-- Sezione per selezionare artista esistente -->
-    <div id="existingArtistFields">
-        <label for="selectedArtistId">Select Existing Artist:</label>
-        <select id="selectedArtistId" name="selectedArtistId">
-            <option value="">-- Select an Artist --</option>
-            <option th:each="artist : ${artists}"
-                    th:value="${artist.id}"
-                    th:text="${artist.name}">Artist Name</option>
-        </select>
-        <!-- Potresti aggiungere qui un campo di ricerca con JS -->
-    </div>
+    <!-- Lista dinamica degli artisti -->
+    <ul id="artistList"></ul>
 
     <!-- Sezione per aggiungere nuovo artista (inizialmente nascosta) -->
-    <div id="newArtist" th:object="${newArtist}">
-        <h3>New Artist Details</h3>
+    <div id="newArtistFields" style="display:none;">
+        <h3>Add New Artist</h3>
         <div>
             <label for="name">Name:</label>
-            <input type="text" id="name" th:field="*{name}">
-            <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></span>
+            <input type="text" id="name" th:field="${name}" placeholder="Enter artist name..." required>
         </div>
         <div>
-            <label for="description">Description:</label>
-            <textarea id="description" th:field="*{description}"></textarea>
-            <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error"></span>
+            <label for="newDescription">Description:</label>
+            <textarea id="newDescription" placeholder="Enter artist description..."></textarea>
         </div>
     </div>
 
-    <br>
+    <script>
+        const searchField = document.getElementById('artistSearch');
+        const artistList = document.getElementById('artistList');
+        const newArtistFields = document.getElementById('newArtistFields');
 
-    <div>
-        <button type="submit">Add Music</button>
-    </div>
+        // Funzione per cercare artisti
+        async function searchArtists(query) {
+            try {
+                const response = await fetch(`/searchArtists?query=${query}`);
+                const results = await response.json();
+
+                // Pulizia della lista e aggiornamento con i nuovi risultati
+                artistList.innerHTML = '';
+
+                if (results.length === 0) {
+                    // Mostra un pulsante che consente di aggiungere un nuovo artista se non ci sono risultati
+                    artistList.innerHTML = `
+                    <li>
+                        <span>No artist found</span>
+                        <button class="add-new-artist-btn" onclick="showNewArtistSection()">+ Add Artist</button>
+                    </li>`;
+                } else {
+                    // Popolare la lista con gli artisti restituiti
+                    results.forEach((artist, index) => {
+                        const artistElement = document.createElement('li');
+                        artistElement.innerHTML = `
+                        <span>${artist.name}</span>
+                        ${index === 0 ? '<button class="add-new-artist-btn" onclick="showNewArtistSection()">+ Add Artist</button>' : ''}
+                    `;
+                        artistList.appendChild(artistElement);
+                    });
+                }
+            } catch (err) {
+                console.error('Error fetching artists:', err);
+            }
+        }
+
+        // Gestore evento per input passivo nella barra di ricerca
+        searchField.addEventListener('input', function () {
+            console.log("Search query:", this.value); // Log per debugging
+            const query = this.value.trim();
+            if (query.length > 0) {
+                searchArtists(query);
+            } else {
+                // Se il campo è vuoto, svuota la lista
+                artistList.innerHTML = '';
+            }
+        });
+
+        // Mostrare la sezione per aggiungere un nuovo artista
+        function showNewArtistSection() {
+            artistList.style.display = 'none'; // Nascondere la lista corrente
+            newArtistFields.style.display = 'block'; // Mostrare il form per il nuovo artista
+        }
+    </script>
+
 </form>
 
-<script>
-    // Script per mostrare/nascondere i campi del nuovo artista
-    const addNewArtistCheckbox = document.getElementById('addNewArtistCheckbox');
-    const existingArtistFields = document.getElementById('existingArtistFields');
-    const newArtistFields = document.getElementById('newArtistFields');
-    const selectedArtistSelect = document.getElementById('selectedArtistId');
-    const newArtistNameInput = document.getElementById('newArtistName');
-    const newArtistDescriptionInput = document.getElementById('newArtistDescription');
+<div>
+    <button type="submit">Submit</button>
+</div>
 
-
-    addNewArtistCheckbox.addEventListener('change', function() {
-        if (this.checked) {
-            existingArtistFields.style.display = 'none';
-            newArtistFields.style.display = 'block';
-            // Rendi i campi del nuovo artista richiesti e disabilita la selezione esistente
-            selectedArtistSelect.removeAttribute('required');
-            selectedArtistSelect.disabled = true;
-            newArtistNameInput.setAttribute('required', 'required');
-            // newArtistDescriptionInput non è @NotBlank, quindi non lo rendiamo required qui
-        } else {
-            existingArtistFields.style.display = 'block';
-            newArtistFields.style.display = 'none';
-            // Rendi la selezione esistente richiesta e disabilita i campi del nuovo artista
-            selectedArtistSelect.setAttribute('required', 'required');
-            selectedArtistSelect.disabled = false;
-            newArtistNameInput.removeAttribute('required');
-            // Pulisci i valori dei campi del nuovo artista quando vengono nascosti
-            newArtistNameInput.value = '';
-            newArtistDescriptionInput.value = '';
-        }
-    });
-
-    // Imposta lo stato iniziale in base al valore di default della checkbox (se presente)
-    // Questo è utile se il form viene ri-mostrato a causa di errori di validazione
-    document.addEventListener('DOMContentLoaded', function() {
-        if (addNewArtistCheckbox.checked) {
-            existingArtistFields.style.display = 'none';
-            newArtistFields.style.display = 'block';
-            selectedArtistSelect.removeAttribute('required');
-            selectedArtistSelect.disabled = true;
-            newArtistNameInput.setAttribute('required', 'required');
-        } else {
-            existingArtistFields.style.display = 'block';
-            newArtistFields.style.display = 'none';
-            selectedArtistSelect.setAttribute('required', 'required');
-            selectedArtistSelect.disabled = false;
-            newArtistNameInput.removeAttribute('required');
-        }
-    });
-
-
-</script>
 
 </body>
 </html>
