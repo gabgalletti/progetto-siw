@@ -22,9 +22,9 @@
 
         <div th:if="${music.artist != null}">
             <h3>Artist:</h3>
-            <ul>
-                <li th:text="${music.artist.name}">Artist Name</li>
-            </ul>
+
+            <a th:href="@{'/artist/' + ${music.artist.id}}" th:text="${music.artist.name}">Artist Name</a>
+
         </div>
 
         <div th:if="${music.lyrics != null and not #strings.isEmpty(music.lyrics)}">

@@ -61,7 +61,7 @@ public class MusicUploadController {
                                    @ModelAttribute("music") Music music,
                                    @RequestParam(value = "selectedArtistId", required = false) Long selectedArtistId,
                                    @ModelAttribute(value = "newArtist") Artist newArtist,
-                                   @ModelAttribute("name") String name,
+                                   @RequestParam(value="name", required = false) String name,
                                    Model model) {
 
 
@@ -122,6 +122,6 @@ public class MusicUploadController {
             model.addAttribute("errorMessage", "Errore durante il caricamento del file.");
         }
 
-        return "formAddMusic"; // Torna alla pagina del form
+        return "redirect:/music/all";
     }
 }
