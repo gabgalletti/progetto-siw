@@ -46,20 +46,26 @@
         <label for="artistSearch">Search Artist by Name:</label>
         <input type="text" id="artistSearch" placeholder="Type to search artist...">
     </div>
+    <div id="addArtistButtonContainer">
+        <button class="add-new-artist-btn" onclick="showNewArtistSection()">+ Add Artist</button>
+    </div>
 
     <!-- Lista dinamica degli artisti -->
     <ul id="artistList"></ul>
 
+    <!-- Campo nascosto per l'artista selezionato -->
+    <input type="hidden" id="selectedArtistId" name="selectedArtistId" />
+
     <!-- Sezione per aggiungere nuovo artista (inizialmente nascosta) -->
-    <div id="newArtistFields" style="display:none;">
+    <div id="newArtistFields" th:object="${newArtist}" style="display:none;">
         <h3>Add New Artist</h3>
         <div>
             <label for="name">Name:</label>
-            <input type="text" id="name" th:field="${name}" placeholder="Enter artist name..." required>
+            <input type="text" id="name" th:field="*{name}" placeholder="Enter artist name..." required>
         </div>
         <div>
             <label for="newDescription">Description:</label>
-            <textarea id="newDescription" placeholder="Enter artist description..."></textarea>
+            <textarea id="newDescription" th:field="*{description}" placeholder="Enter artist description..."></textarea>
         </div>
     </div>
 
@@ -74,31 +80,44 @@
                 const response = await fetch(`/searchArtists?query=${query}`);
                 const results = await response.json();
 
-                // Pulizia della lista e aggiornamento con i nuovi risultati
+                // Pulizia della sola lista (non del pulsante)
                 artistList.innerHTML = '';
 
                 if (results.length === 0) {
-                    // Mostra un pulsante che consente di aggiungere un nuovo artista se non ci sono risultati
-                    artistList.innerHTML = `
-                    <li>
-                        <span>No artist found</span>
-                        <button class="add-new-artist-btn" onclick="showNewArtistSection()">+ Add Artist</button>
-                    </li>`;
+                    const noArtistElement = document.createElement('li');
+                    noArtistElement.textContent = 'No artist found';
+                    artistList.appendChild(noArtistElement);
                 } else {
-                    // Popolare la lista con gli artisti restituiti
-                    results.forEach((artist, index) => {
-                        const artistElement = document.createElement('li');
-                        artistElement.innerHTML = `
-                        <span>${artist.name}</span>
-                        ${index === 0 ? '<button class="add-new-artist-btn" onclick="showNewArtistSection()">+ Add Artist</button>' : ''}
-                    `;
-                        artistList.appendChild(artistElement);
+                    results.forEach((artist) => {
+                        const liElement = document.createElement('li');
+                        liElement.textContent = artist.name; // Inserisci il nome dell'artista nel tag <li>
+                        liElement.setAttribute('data-id', artist.id); // Aggiungi data-id con l'id dell'artista
+                        liElement.style.cursor = 'pointer'; // Assicurati che sembri cliccabile con il cursore 'pointer'
+                        artistList.appendChild(liElement);
                     });
+
                 }
-            } catch (err) {
-                console.error('Error fetching artists:', err);
+            } catch (error) {
+                console.error('Error fetching artists:', error);
             }
         }
+
+        artistList.addEventListener('click', function (e) {
+            if (e.target && e.target.tagName === 'LI') {
+                // Ottieni l'ID dell'artista selezionato dal data-id
+                const selectedId = e.target.getAttribute('data-id');
+
+                // Imposta il valore nel campo nascosto
+                const hiddenField = document.getElementById('selectedArtistId');
+                hiddenField.value = selectedId;
+
+                // Evidenzia l'artista selezionato (opzionale)
+                Array.from(artistList.children).forEach(li => li.classList.remove('selected')); // Rimuove selezioni precedenti
+                e.target.classList.add('selected'); // Aggiunge lo stile al selezionato
+            }
+        });
+
+
 
         // Gestore evento per input passivo nella barra di ricerca
         searchField.addEventListener('input', function () {
@@ -118,12 +137,12 @@
             newArtistFields.style.display = 'block'; // Mostrare il form per il nuovo artista
         }
     </script>
-
+    <div>
+        <button type="submit" id="submitBtn">Submit</button>
+    </div>
 </form>
 
-<div>
-    <button type="submit">Submit</button>
-</div>
+
 
 
 </body>
