@@ -26,12 +26,6 @@
             <a th:href="@{'/artist/' + ${music.artist.id}}" th:text="${music.artist.name}">Artist Name</a>
 
         </div>
-
-        <div th:if="${music.lyrics != null and not #strings.isEmpty(music.lyrics)}">
-            <h3>Lyrics:</h3>
-            <pre th:text="${music.lyrics}">Lyrics here</pre>
-        </div>
-
         <div th:if="${music.audioFilePath != null}">
             <h3>Play Music:</h3>
             <audio controls preload="metadata"> <!-- 'controls' per i comandi, 'preload' è opzionale -->
@@ -49,14 +43,18 @@
             <p>No audio file available for this music track.</p>
         </div>
     </div>
+        <div th:if="${music.lyrics != null and not #strings.isEmpty(music.lyrics)}">
+            <h3>Lyrics:</h3>
+            <pre th:text="${music.lyrics}">Lyrics here</pre>
+        </div>
+
+
     <div th:if="${music == null}">
         <p>Music track not found.</p>
     </div>
 </main>
 
-<footer>
-    <p>&copy; 2025 Your Music App</p>
-</footer>
+
 
 </body>
 </html>

@@ -5,7 +5,7 @@
     <title>Musics</title>
 </head>
 <body>
-    <div>
+    <div th:if="${musics != null && !musics.isEmpty()}">
         <h1>Musics</h1>
         <ul th:each="music: ${musics}">
             <a th:href="@{/music/{id}(id = ${music.id})}" th:text="${music.title}">No Music</a>

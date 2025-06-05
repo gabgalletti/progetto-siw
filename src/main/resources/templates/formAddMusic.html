@@ -5,7 +5,95 @@
     <style>
         .error { color: red; }
         .success { color: green; }
-        #newArtistFields { display: none; } /* Nasconde i campi del nuovo artista inizialmente */
+
+        /* Stili per il menu a tendina degli artisti */
+        .search-container {
+            position: relative; /* Necessario per posizionare la lista artisti */
+            margin-bottom: 10px;
+        }
+
+        #artistList {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            border: 1px solid #ccc;
+            position: absolute; /* Posizionamento assoluto per il dropdown */
+            background-color: white;
+            z-index: 1000; /* Assicura che sia sopra altri elementi */
+            width: 100%; /* Occuperà la larghezza del suo contenitore (.search-container) o del campo di ricerca */
+            max-height: 200px;
+            overflow-y: auto;
+            box-sizing: border-box; /* Include padding e border nel width/height totale */
+        }
+
+        #artistList li {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        #artistList li:hover {
+            background-color: #f0f0f0;
+        }
+
+        #artistList li.selected { /* Stile per l'artista selezionato nel dropdown */
+            background-color: #007bff;
+            color: white;
+        }
+
+        #artistList li.add-new-artist-dropdown-item {
+            font-weight: bold;
+            color: #007bff;
+            border-bottom: 1px solid #eee;
+        }
+        #artistList li.add-new-artist-dropdown-item:hover {
+            background-color: #e9ecef;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 2000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; /* 5% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            max-width: 500px;
+            position: relative;
+            border-radius: 8px;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Stile per il messaggio di errore dell'artista */
+        #artistSelectionErrorContainer .error {
+            margin-top: 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -35,115 +123,297 @@
     <div>
         <label for="audioFile">Audio File (MP3, WAV, OGG):</label>
         <input type="file" id="audioFile" name="audioFile" accept=".mp3,.wav,.ogg" required>
+        <!-- Visualizzazione errori per audioFile (se gestiti dal backend) -->
+        <span th:if="${#fields.hasErrors('audioFilePath')}" th:errors="*{audioFilePath}" class="error"></span>
     </div>
 
     <hr>
 
-    <h2>Search Artist</h2>
+    <h2>Artist</h2>
 
-    <!-- Barra di ricerca -->
-    <div>
-        <label for="artistSearch">Search Artist by Name:</label>
-        <input type="text" id="artistSearch" placeholder="Type to search artist...">
+    <!-- Sezione Ricerca Artista -->
+    <div class="search-container">
+        <label for="artistSearch">Search Existing Artist or Add New:</label>
+        <input type="text" id="artistSearch" placeholder="Type to search or click '+' in list..." autocomplete="off">
+        <!-- La lista degli artisti (dropdown) verrà popolata qui -->
+        <ul id="artistList" style="display: none;"></ul>
+        <!-- Contenitore per il messaggio di errore della selezione artista -->
+        <div id="artistSelectionErrorContainer"></div>
     </div>
-    <div id="addArtistButtonContainer">
-        <button class="add-new-artist-btn" onclick="showNewArtistSection()">+ Add Artist</button>
-    </div>
 
-    <!-- Lista dinamica degli artisti -->
-    <ul id="artistList"></ul>
 
-    <!-- Campo nascosto per l'artista selezionato -->
+    <!-- Campo nascosto per l'ID dell'artista selezionato -->
     <input type="hidden" id="selectedArtistId" name="selectedArtistId" />
 
-    <!-- Sezione per aggiungere nuovo artista (inizialmente nascosta) -->
-    <div id="newArtistFields" th:object="${newArtist}" style="display:none;">
-        <h3>Add New Artist</h3>
-        <div>
-            <label for="name">Name:</label>
-            <input type="text" id="name" th:field="*{name}" placeholder="Enter artist name..." required>
-        </div>
-        <div>
-            <label for="newDescription">Description:</label>
-            <textarea id="newDescription" th:field="*{description}" placeholder="Enter artist description..."></textarea>
+    <!-- Modal per Nuovo Artista -->
+    <div id="newArtistModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeNewArtistModal()">&times;</span>
+            <div id="newArtistFieldsContainer" th:object="${newArtist}">
+                <h3>Add New Artist Details</h3>
+                <div>
+                    <label for="newArtistName">Name:</label>
+                    <input type="text" id="newArtistName" th:field="*{name}" placeholder="Enter artist name..." autocomplete="off" pattern=".*\S.*" title="Name cannot be empty or contain only spaces.">
+                </div>
+                <!--<div>
+                    <label for="photo">Photo (JPG, PNG, JPEG):</label>
+                    <input type="file" id="photo" name="photo" accept=".jpg,.png,.jpeg" required>
+                    <span th:if="${#fields.hasErrors('photoPath')}" th:errors="*{photoPath}" class="error"></span>
+                </div>-->
+                <div>
+                    <label for="newArtistDescription">Description:</label>
+                    <textarea id="newArtistDescription" th:field="*{description}" placeholder="Enter artist description..."></textarea>
+                </div>
+                <button type="button" id="confirmNewArtistBtn" style="margin-top: 15px; padding: 8px 15px;">Confirm New Artist</button>
+            </div>
         </div>
     </div>
+
 
     <script>
         const searchField = document.getElementById('artistSearch');
         const artistList = document.getElementById('artistList');
-        const newArtistFields = document.getElementById('newArtistFields');
+        const selectedArtistIdField = document.getElementById('selectedArtistId');
+        const newArtistModal = document.getElementById('newArtistModal');
+        const newArtistNameInput = document.getElementById('newArtistName');
+        const newArtistDescriptionInput = document.getElementById('newArtistDescription');
+        const confirmNewArtistBtn = document.getElementById('confirmNewArtistBtn');
+        const mainForm = document.querySelector('form[th\\:action="@{/music/add}"]'); // Selettore per il form
+
+        let isNewArtistConfirmed = false; // Traccia se un nuovo artista è stato confermato
 
         // Funzione per cercare artisti
         async function searchArtists(query) {
             try {
-                const response = await fetch(`/searchArtists?query=${query}`);
+                const response = await fetch(`/searchArtists?query=${encodeURIComponent(query)}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const results = await response.json();
-
-                // Pulizia della sola lista (non del pulsante)
                 artistList.innerHTML = '';
 
-                if (results.length === 0) {
+                const addNewArtistOption = document.createElement('li');
+                addNewArtistOption.textContent = '+ Add New Artist';
+                addNewArtistOption.classList.add('add-new-artist-dropdown-item');
+                artistList.appendChild(addNewArtistOption);
+
+                if (results.length === 0 && query.length > 0) {
                     const noArtistElement = document.createElement('li');
-                    noArtistElement.textContent = 'No artist found';
+                    noArtistElement.textContent = 'No artist found for "' + query + '". Select "+ Add New Artist" above.';
                     artistList.appendChild(noArtistElement);
                 } else {
                     results.forEach((artist) => {
                         const liElement = document.createElement('li');
-                        liElement.textContent = artist.name; // Inserisci il nome dell'artista nel tag <li>
-                        liElement.setAttribute('data-id', artist.id); // Aggiungi data-id con l'id dell'artista
-                        liElement.style.cursor = 'pointer'; // Assicurati che sembri cliccabile con il cursore 'pointer'
+                        liElement.setAttribute('data-id', artist.id);
+
+                        // Aggiungi l'immagine dell'artista se photoUrl è disponibile
+                        if (artist.photoUrl) {
+                            const imgElement = document.createElement('img');
+                            imgElement.src = artist.photoUrl;
+                            imgElement.style.width = '24px'; // Larghezza dell'immagine
+                            imgElement.style.height = '24px'; // Altezza dell'immagine
+                            imgElement.style.marginRight = '8px'; // Spazio tra immagine e testo
+                            imgElement.style.verticalAlign = 'middle'; // Allinea l'immagine verticalmente con il testo
+                            imgElement.style.borderRadius = '50%'; // Rende l'immagine circolare
+                            imgElement.style.objectFit = 'cover'; // Assicura che l'immagine copra l'area definita senza distorsioni
+                            liElement.appendChild(imgElement);
+                        }
+
+                        // Aggiungi il nome dell'artista come nodo di testo
+                        liElement.appendChild(document.createTextNode(artist.name));
+
                         artistList.appendChild(liElement);
                     });
-
                 }
+                const searchBoxRect = searchField.getBoundingClientRect();
+                artistList.style.left = searchField.offsetLeft + 'px';
+                artistList.style.top = (searchField.offsetTop + searchField.offsetHeight) + 'px';
+                artistList.style.width = searchField.offsetWidth + 'px';
+                artistList.style.display = 'block';
             } catch (error) {
                 console.error('Error fetching artists:', error);
+                artistList.innerHTML = '';
+                const addNewArtistOptionOnError = document.createElement('li');
+                addNewArtistOptionOnError.textContent = '+ Add New Artist';
+                addNewArtistOptionOnError.classList.add('add-new-artist-dropdown-item');
+                artistList.appendChild(addNewArtistOptionOnError);
+                const errorLi = document.createElement('li');
+                errorLi.textContent = 'Error loading artists.';
+                artistList.appendChild(errorLi);
+                artistList.style.display = 'block';
             }
         }
 
+        // Event listener per clic sulla lista degli artisti
         artistList.addEventListener('click', function (e) {
             if (e.target && e.target.tagName === 'LI') {
-                // Ottieni l'ID dell'artista selezionato dal data-id
-                const selectedId = e.target.getAttribute('data-id');
+                if (e.target.classList.contains('add-new-artist-dropdown-item')) {
+                    openNewArtistModal();
+                } else if (e.target.hasAttribute('data-id')) {
+                    const selectedId = e.target.getAttribute('data-id');
+                    const selectedName = e.target.textContent;
 
-                // Imposta il valore nel campo nascosto
-                const hiddenField = document.getElementById('selectedArtistId');
-                hiddenField.value = selectedId;
+                    selectedArtistIdField.value = selectedId;
+                    searchField.value = selectedName;
+                    isNewArtistConfirmed = false; // Un artista esistente è stato selezionato
 
-                // Evidenzia l'artista selezionato (opzionale)
-                Array.from(artistList.children).forEach(li => li.classList.remove('selected')); // Rimuove selezioni precedenti
-                e.target.classList.add('selected'); // Aggiunge lo stile al selezionato
+                    if (newArtistNameInput) {
+                        newArtistNameInput.value = '';
+                        newArtistNameInput.required = false;
+                        newArtistNameInput.setCustomValidity(""); // Pulisce validità custom
+                    }
+                    if (newArtistDescriptionInput) {
+                        newArtistDescriptionInput.value = '';
+                    }
+                    artistList.style.display = 'none';
+                    closeNewArtistModal();
+                    Array.from(artistList.children).forEach(li => li.classList.remove('selected'));
+                    e.target.classList.add('selected');
+                }
             }
         });
 
-
-
-        // Gestore evento per input passivo nella barra di ricerca
+        // Gestore evento per input nella barra di ricerca
         searchField.addEventListener('input', function () {
-            console.log("Search query:", this.value); // Log per debugging
             const query = this.value.trim();
+            selectedArtistIdField.value = '';
+            isNewArtistConfirmed = false; // L'utente sta digitando, invalida la conferma precedente
+
+            if (newArtistNameInput) newArtistNameInput.required = false;
+            closeNewArtistModal();
+
             if (query.length > 0) {
                 searchArtists(query);
             } else {
-                // Se il campo è vuoto, svuota la lista
                 artistList.innerHTML = '';
+                artistList.style.display = 'none';
             }
         });
 
-        // Mostrare la sezione per aggiungere un nuovo artista
-        function showNewArtistSection() {
-            artistList.style.display = 'none'; // Nascondere la lista corrente
-            newArtistFields.style.display = 'block'; // Mostrare il form per il nuovo artista
+        function openNewArtistModal() {
+            newArtistModal.style.display = 'block';
+            searchField.value = '';
+            selectedArtistIdField.value = '';
+            isNewArtistConfirmed = false; // Aprire il modale non è una conferma
+
+            if (newArtistNameInput) {
+                // Non svuotare il valore, l'utente potrebbe voler modificare
+                newArtistNameInput.required = true;
+                newArtistNameInput.focus();
+            }
+            artistList.style.display = 'none';
         }
+
+        function closeNewArtistModal() {
+            newArtistModal.style.display = 'none';
+            if (newArtistNameInput) {
+                newArtistNameInput.required = false;
+                // Non pulire newArtistNameInput.setCustomValidity("") qui,
+                // perché il modale potrebbe essere chiuso programmaticamente
+                // e vogliamo che la validazione (se fallita) persista finché l'utente non interagisce.
+            }
+        }
+
+        // Event listener per il pulsante di conferma del nuovo artista nel modale
+        if (confirmNewArtistBtn) {
+            confirmNewArtistBtn.addEventListener('click', function() {
+                const artistNameValue = newArtistNameInput.value;
+                const trimmedArtistName = artistNameValue.trim();
+
+                newArtistNameInput.setCustomValidity(""); // Pulisce validità custom precedente
+
+                // L'attributo 'pattern' e 'required' sull'input gestiscono la validazione base.
+                // Usiamo checkValidity() per triggerare la validazione del browser.
+                if (!newArtistNameInput.checkValidity() || !trimmedArtistName) {
+                    // Se checkValidity fallisce (es. per pattern o required) o se trimmato è vuoto
+                    newArtistNameInput.reportValidity(); // Mostra il messaggio di validazione del browser
+                    isNewArtistConfirmed = false;
+                    return;
+                }
+
+                // Se arriviamo qui, il nome è valido.
+                newArtistNameInput.value = trimmedArtistName; // Aggiorna il campo con il valore trimmato
+
+                searchField.value = trimmedArtistName + " [new]";
+                selectedArtistIdField.value = ''; // Nessun artista esistente
+                isNewArtistConfirmed = true;      // Nuovo artista confermato con successo!
+
+                closeNewArtistModal();
+                artistList.style.display = 'none';
+            });
+
+            // Pulisce la validità custom e resetta lo stato di conferma se il nome viene modificato
+            newArtistNameInput.addEventListener('input', () => {
+                newArtistNameInput.setCustomValidity("");
+                // Se l'utente modifica il nome dopo una "conferma", quella conferma non è più valida
+                // finché non clicca di nuovo "Confirm New Artist".
+                isNewArtistConfirmed = false;
+            });
+        }
+
+
+        // Event listener per il submit del form principale
+        if (mainForm) {
+            mainForm.addEventListener('submit', function(event) {
+                const selectedId = selectedArtistIdField.value.trim();
+                const artistErrorContainer = document.getElementById('artistSelectionErrorContainer');
+
+                // Rimuovi il messaggio di errore precedente, se esiste
+                if (artistErrorContainer) {
+                    artistErrorContainer.innerHTML = '';
+                }
+
+                if (!selectedId && !isNewArtistConfirmed) {
+                    event.preventDefault(); // Impedisce l'invio del form
+
+                    if (artistErrorContainer) {
+                        const errorParagraph = document.createElement('p');
+                        errorParagraph.className = 'error'; // Usa la classe CSS esistente
+                        errorParagraph.textContent = 'Please select an existing artist, or add and confirm a new one.';
+                        artistErrorContainer.appendChild(errorParagraph);
+                    } else {
+                        // Fallback se il contenitore non dovesse esistere per qualche motivo
+                        alert('Please select an existing artist, or add and confirm a new one.');
+                    }
+                    searchField.focus(); // Porta il focus al campo di ricerca
+                }
+                // Se la validazione passa, il form verrà inviato normalmente.
+            });
+        }
+
+        // Chiude il dropdown se si clicca fuori
+        document.addEventListener('click', function(event) {
+            const isClickInsideSearchContainer = searchField.parentElement.contains(event.target);
+            const isClickInsideArtistList = artistList.contains(event.target);
+
+            if (!isClickInsideSearchContainer && !isClickInsideArtistList && !newArtistModal.contains(event.target)) {
+                artistList.style.display = 'none';
+            }
+            // Chiude il modal se si clicca fuori dal contenuto del modal
+            if (event.target == newArtistModal) {
+                closeNewArtistModal();
+            }
+        });
+
+        // Opzionale: mostra il dropdown quando il campo di ricerca riceve il focus e ha del testo
+        searchField.addEventListener('focus', function() {
+            if (this.value.trim().length > 0 && artistList.children.length > 0) {
+                const firstItem = artistList.children[0];
+                if (firstItem.hasAttribute('data-id') || firstItem.classList.contains('add-new-artist-dropdown-item') || artistList.children.length > 1) {
+                    const searchBoxRect = searchField.getBoundingClientRect();
+                    artistList.style.left = searchField.offsetLeft + 'px';
+                    artistList.style.top = (searchField.offsetTop + searchField.offsetHeight) + 'px';
+                    artistList.style.width = searchField.offsetWidth + 'px';
+                    artistList.style.display = 'block';
+                }
+            }
+        });
+
     </script>
     <div>
         <button type="submit" id="submitBtn">Submit</button>
     </div>
 </form>
-
-
-
 
 </body>
 </html>

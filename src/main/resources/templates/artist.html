@@ -6,6 +6,7 @@
 </head>
 <body>
 <div th:if="${artist != null}">
+    <img th:if="${artist.photoUrl != null}" th:src="${artist.photoUrl}">
     <h1 th:text="${artist.name}">Nome Artista</h1>
     <div th:if="${artist.description != null && !artist.description.isEmpty()}">
         <p><strong>Descrizione:</strong></p>

@@ -1,6 +1,7 @@
 package it.uniroma3.progettosiwmusica.controller;
 
 import it.uniroma3.progettosiwmusica.model.Artist;
+import it.uniroma3.progettosiwmusica.repository.ArtistRepository;
 import it.uniroma3.progettosiwmusica.service.ArtistService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,18 +11,58 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class ArtistController {
     @Autowired private ArtistService artistService;
+    @Autowired
+    private ArtistRepository artistRepository;
 
     @GetMapping("/formAddArtist")
     public String formAddArtist(Model model) {
         model.addAttribute("artist", new Artist());
         return "formAddArtist";
+    }
+
+    @PostMapping("/formAddArtist")
+    public String handleFormAddArtist(@ModelAttribute Artist artist,
+                                @RequestParam("photo") MultipartFile photo,
+                                Model model) {
+        String artistName = "unknown";
+        if(artist.getName() != null)
+            artistName = artist.getName();
+
+        try {
+            String originalFilename = photo.getOriginalFilename();
+            String fileExtension = "";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                fileExtension = originalFilename.substring(originalFilename.lastIndexOf('.') + 1);
+            }
+            String filename = String.format("%s.%s", artistName, fileExtension);
+
+            // Crea il percorso fisico per salvare il file
+            Path uploadPath = Paths.get("C:/Users/Gabriele/Desktop/uploads/artists-photo/");
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            Path filePath = uploadPath.resolve(filename);
+            photo.transferTo(filePath.toFile());
+            artist.setPhotoPath(filePath.toString());
+            String fileUrl = String.format("/artists-photo/%s", filename);
+            artist.setPhotoUrl(fileUrl);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        artistRepository.save(artist);
+        return "redirect:/artists";
     }
 
     @GetMapping("/artists")

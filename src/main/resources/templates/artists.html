@@ -8,10 +8,17 @@
 <h1>Lista di Tutti gli Artisti</h1>
 
 <div th:if="${artists != null && !artists.isEmpty()}">
-    <ul>
+    <ul style="list-style-type: none; padding-left: 0;">
         <li th:each="artist : ${artists}">
-            <a th:href="@{'/artist/' + ${artist.id}}" th:text="${artist.name}">Nome Artista</a>
-            <span th:if="${artist.description != null && !artist.description.isEmpty()}" th:text="' - ' + ${artist.description}"></span>
+            <a th:href="@{'/artist/' + ${artist.id}}" style="display: inline-flex; align-items: center; text-decoration: none; color: inherit;">
+                <!-- Immagine dell'artista -->
+                <img th:if="${artist.photoUrl != null && !#strings.isEmpty(artist.photoUrl)}"
+                     th:src="${artist.photoUrl}"
+                     th:alt="${'Foto di ' + artist.name}"
+                     style="width: 24px; height: 24px; margin-right: 8px; border-radius: 50%; object-fit: cover;"/>
+                <!-- Nome dell'artista -->
+                <span th:text="${artist.name}">Nome Artista</span>
+            </a>
         </li>
     </ul>
 </div>
