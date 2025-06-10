@@ -1,0 +1,41 @@
+body {
+    background-color: black;
+    font-family: Arial;
+    display: block;
+}
+
+.container {
+    max-width: 800px;
+    margin: 60px auto 40px auto;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #ffffffcc;
+    border-radius: 12px;
+}
+
+nav {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+nav a {
+    color: white;
+    font-size: 18px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+img {
+    max-width: 100%;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+a {
+    color: #004b66;
+    display: block;
+    margin: 10px 0;
+}

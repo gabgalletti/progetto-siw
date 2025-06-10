@@ -1,18 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Home Page</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/home.css}"/>
 </head>
 <body>
-    <div class="navbar">
-        <span>Title</span>
-        <span th:if="${user}">
-            <a>Account</a>
-        </span>
-        <span th:unless="${user}">
-            <a>Login</a>
-        </span>
+<div class="navbar">
+
+    <span>MusicApp</span>
+    <div>
+        <!-- Autenticazione ?? -->
     </div>
+    <div class="round-button">
+        <a href="#" title="Azione">
+            &#43; <!-- Simbolo "+" oppure sostituiscilo con un'icona -->
+        </a>
+    </div>
+
+</div>
+
+<div class="container">
+    <h1>Benvenuto su MusicApp!</h1>
+    <p>Esplora la nostra collezione di musica e artisti.</p>
+
+    <!-- Barra di Ricerca -->
+    <div class="search-container">
+        <form th:action="@{/search}" method="get">
+            <input type="text" name="query" placeholder="Cerca artisti, musiche...">
+            <button type="submit">Cerca</button>
+        </form>
+    </div>
+
+    <!-- Messaggio di Feedback della Ricerca -->
+    <div th:if="${searchMessage}" class="search-feedback info">
+        <p th:text="${searchMessage}"></p>
+    </div>
+
+    <!-- Bottoni di Navigazione -->
+    <div class="nav-buttons">
+        <a th:href="@{/artists}">Vedi tutti gli Artisti</a>
+        <a th:href="@{/music/all}">Vedi tutte le Musiche</a>
+    </div>
+</div>
+
 </body>
 </html>

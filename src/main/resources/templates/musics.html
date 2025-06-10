@@ -1,15 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Musics</title>
+    <title>Brani</title>
+    <link rel="stylesheet" th:href="@{/css/musics.css}">
 </head>
 <body>
-    <div th:if="${musics != null && !musics.isEmpty()}">
-        <h1>Musics</h1>
-        <ul th:each="music: ${musics}">
-            <a th:href="@{/music/{id}(id = ${music.id})}" th:text="${music.title}">No Music</a>
-        </ul>
-    </div>
+
+<h1>Brani</h1>
+
+<div class="track-list">
+    <a class="track" th:each="music : ${musics}" th:href="@{'/music/' + ${music.id}}">
+        <div class="track-info">
+            <!-- Eventuale copertina -->
+            <!--
+            <div class="cover-placeholder">
+                <img th:src="@{${music.coverUrl}}" alt="Cover" />
+            </div>
+            -->
+
+            <div class="text-info">
+                <p class="title" th:text="${music.title}">Titolo</p>
+                <p class="artist" th:text="${music.artist != null ? music.artist.name : 'Sconosciuto'}">Artista</p>
+            </div>
+        </div>
+
+        <div class="duration">
+            <span th:text="${music.duration != null ? music.duration : '3:30'}">3:30</span>
+        </div>
+    </a>
+</div>
 </body>
 </html>

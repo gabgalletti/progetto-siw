@@ -3,31 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${music != null && music.title != null ? music.title : 'Music Details'}">Music Title</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/> <!-- Esempio di CSS -->
+    <link rel="stylesheet" th:href="@{/css/music.css}">
 </head>
 <body>
-<header>
-    <h1>Music Details</h1>
-</header>
-
 <nav>
-    <a th:href="@{/home}">Home</a>
-    <a th:href="@{/music/all}">All Music</a>
-    <a th:href="@{/music/add}">Add New Music</a>
+    <a th:href="@{/home}"> < Home </a>
 </nav>
 
 <main>
-    <div th:if="${music != null}">
+    <div class="centro" th:if="${music != null}">
         <h2 th:if="${music.title != null}" th:text="${music.title}">Music Title</h2>
 
         <div th:if="${music.artist != null}">
-            <h3>Artist:</h3>
+            <h3>Artist:
+                <a th:href="@{'/artist/' + ${music.artist.id}}" th:text="${music.artist.name}">Artist Name</a>
+            </h3>
 
-            <a th:href="@{'/artist/' + ${music.artist.id}}" th:text="${music.artist.name}">Artist Name</a>
 
         </div>
+
         <div th:if="${music.audioFilePath != null}">
-            <h3>Play Music:</h3>
             <audio controls preload="metadata"> <!-- 'controls' per i comandi, 'preload' è opzionale -->
                 <!-- Fonte per file MP3 -->
                 <source th:src="${music.fileUrl}" type="audio/mpeg">
@@ -39,22 +34,15 @@
                 Your browser does not support the audio element.
             </audio>
         </div>
-        <div th:if="${music.audioFilePath == null}">
-            <p>No audio file available for this music track.</p>
-        </div>
     </div>
-        <div th:if="${music.lyrics != null and not #strings.isEmpty(music.lyrics)}">
-            <h3>Lyrics:</h3>
-            <pre th:text="${music.lyrics}">Lyrics here</pre>
-        </div>
-
-
-    <div th:if="${music == null}">
+    <div class="centro" th:if="${music == null}">
         <p>Music track not found.</p>
     </div>
 </main>
-
-
+<div class="centro" th:if="${music.lyrics != null and not #strings.isEmpty(music.lyrics)}">
+    <h3>Lyrics:</h3>
+    <pre th:text="${music.lyrics}">Lyrics here</pre>
+</div>
 
 </body>
 </html>

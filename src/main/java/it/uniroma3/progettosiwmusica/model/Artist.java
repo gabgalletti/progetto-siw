@@ -29,6 +29,11 @@ public class Artist {
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Music> musics = new ArrayList<>();
 
+    private String imageUrl;
+
+    public String getImageUrl() {return imageUrl;}
+
+    public void setImageUrl(String imageUrl) {this.imageUrl = imageUrl;}
 
 
     public Long getId() {

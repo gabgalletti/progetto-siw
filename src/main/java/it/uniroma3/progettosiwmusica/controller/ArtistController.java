@@ -1,8 +1,10 @@
 package it.uniroma3.progettosiwmusica.controller;
 
 import it.uniroma3.progettosiwmusica.model.Artist;
+import it.uniroma3.progettosiwmusica.model.Music;
 import it.uniroma3.progettosiwmusica.repository.ArtistRepository;
 import it.uniroma3.progettosiwmusica.service.ArtistService;
+import it.uniroma3.progettosiwmusica.service.MusicService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,9 +25,13 @@ import java.util.Optional;
 
 @Controller
 public class ArtistController {
-    @Autowired private ArtistService artistService;
+
+ @Autowired private ArtistService artistService;
+ @Autowired private MusicService musicService;
+
     @Autowired
     private ArtistRepository artistRepository;
+
 
     @GetMapping("/formAddArtist")
     public String formAddArtist(Model model) {
@@ -70,7 +77,7 @@ public class ArtistController {
         model.addAttribute("artists", this.artistService.getAllArtists());
         return "artists"; // Assicurati di avere un template artists.html
     }
-
+    
     @GetMapping("/artist/{id}")
     public String getArtist(@PathVariable("id") Long id, Model model) {
         Optional<Artist> artist = this.artistService.getArtistById(id);
@@ -105,5 +112,34 @@ public class ArtistController {
         if (bindingResult.hasErrors()) {return "formAddArtist";}
         Artist savedArtist = this.artistService.save(artist);
         return "redirect:/artist/" + savedArtist.getId();
+    }
+
+
+    @GetMapping("/search")
+    public String search(@RequestParam(value = "query", required = false) String query,
+                         RedirectAttributes redirectAttributes) {
+        if (query == null || query.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("searchMessage", "Per favore, inserisci un termine di ricerca.");
+            return "redirect:/home";
+        }
+
+        List<Artist> foundArtists = artistService.findByNameContainingIgnoreCase(query);
+        List<Music> foundMusic = musicService.findByTitleContainingIgnoreCase(query); // Assicurati che questo metodo esista in MusicService
+        boolean singleArtistFound = foundArtists.size() == 1;
+        boolean singleMusicFound = foundMusic.size() == 1;
+
+        if (singleArtistFound && foundMusic.isEmpty()) {
+            return "redirect:/artist/" + foundArtists.get(0).getId();
+        }
+
+        if (singleMusicFound && foundArtists.isEmpty()) {
+            return "redirect:/music/" + foundMusic.get(0).getId();
+        }
+        if (foundArtists.isEmpty() && foundMusic.isEmpty()) {
+            redirectAttributes.addFlashAttribute("searchMessage", "Nessun artista o musica trovati per: '" + query + "'.");
+        } else {
+            redirectAttributes.addFlashAttribute("searchMessage", "La ricerca per '" + query + "' non ha prodotto un risultato unico e specifico. Prova a essere più preciso o consulta le liste complete.");
+        }
+        return "redirect:/home";
     }
 }
