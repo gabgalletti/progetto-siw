@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,5 +26,9 @@ public class MusicService {
 
     public Iterable<Music> getAllMusics() {
         return musicRepository.findAll();
+    }
+
+    public List<Music> findByTitleContainingIgnoreCase(String title) {
+        return musicRepository.findByTitleContainingIgnoreCase(title);
     }
 }

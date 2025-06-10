@@ -1,0 +1,17 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #97B2B8;
+    margin: 0;
+    padding: 20px;
+}
+
+nav {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+.centro {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}

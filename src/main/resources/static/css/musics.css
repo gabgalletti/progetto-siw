@@ -1,0 +1,70 @@
+body {
+    background-color: #121212;
+    color: white;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 40px;
+}
+
+h1 {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.track-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 700px;   /* imposta la larghezza massima desiderata */
+}
+
+.track {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.track:hover {
+    background-color: #2a2a2a;
+}
+
+.track-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/*.cover-placeholder img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+} */
+
+.text-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    margin: 0;
+}
+
+.artist {
+    font-size: 14px;
+    color: #b3b3b3;
+    margin: 0;
+}
+
+.duration {
+    font-size: 14px;
+    color: #b3b3b3;
+}

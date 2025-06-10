@@ -17,20 +17,24 @@ public class ArtistService {
     public Artist save(Artist artist) {
         return artistRepository.save(artist);
     }
+
     public Optional<Artist> getArtistById(long id) {
         return artistRepository.findById(id);
     }
+
     public Artist getArtistByName(String name) {
         return artistRepository.findByName(name);
     }
+
     public Iterable<Artist> getAllArtists(){
         return artistRepository.findAll();
     }
+
     public void deleteArtist(Artist artist){
         artistRepository.delete(artist);
     }
+
     public List<Artist> findByNameContainingIgnoreCase(String name) {
-        return artistRepository.findByNameContainingIgnoreCase(name);
-    }
+        return artistRepository.findByNameContainingIgnoreCase(name);}
 
 }
