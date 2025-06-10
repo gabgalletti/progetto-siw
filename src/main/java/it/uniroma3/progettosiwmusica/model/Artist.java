@@ -20,6 +20,9 @@ public class Artist {
     @Column(columnDefinition = "TEXT") // Buono per testi lunghi se necessario
     private String description;
 
+    private String photoPath;
+    private String photoUrl;
+
     // Artist è il LATO INVERSE (non proprietario) della relazione ManyToMany
     // "artists" è il nome del campo List<Artist> artists in Music.java
     @JsonIgnore
@@ -31,6 +34,7 @@ public class Artist {
     public String getImageUrl() {return imageUrl;}
 
     public void setImageUrl(String imageUrl) {this.imageUrl = imageUrl;}
+
 
     public Long getId() {
         return id;
@@ -64,6 +68,11 @@ public class Artist {
         this.musics = musics;
     }
 
+    public void setPhotoPath(String photoPath){ this.photoPath = photoPath; }
+
+    public String getPhotoPath(){ return photoPath; }
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -86,4 +95,7 @@ public class Artist {
         }
         return Objects.hash(name); // Fallback
     }
+
+    public String getPhotoUrl(){ return this.photoUrl; }
+    public void setPhotoUrl(String fileUrl) { this.photoUrl = fileUrl;}
 }
