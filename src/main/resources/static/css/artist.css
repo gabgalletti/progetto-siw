@@ -19,13 +19,19 @@ nav {
     left: 20px;
 }
 
-nav a {
+.home-button {
+    text-decoration: none;
     color: white;
-    font-size: 18px;
+    background-color: #2c3e50;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    transition: background-color 0.3s;
 }
 
-nav a:hover {
-    text-decoration: underline;
+.home-button:hover {
+    background-color: #1a242f;
 }
 
 img {

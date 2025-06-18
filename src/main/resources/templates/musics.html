@@ -12,12 +12,6 @@
 <div class="track-list">
     <a class="track" th:each="music : ${musics}" th:href="@{'/music/' + ${music.id}}">
         <div class="track-info">
-            <!-- Eventuale copertina -->
-            <!--
-            <div class="cover-placeholder">
-                <img th:src="@{${music.coverUrl}}" alt="Cover" />
-            </div>
-            -->
 
             <div class="text-info">
                 <p class="title" th:text="${music.title}">Titolo</p>
@@ -25,9 +19,6 @@
             </div>
         </div>
 
-        <div class="duration">
-            <span th:text="${music.duration != null ? music.duration : '3:30'}">3:30</span>
-        </div>
     </a>
 </div>
 </body>

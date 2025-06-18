@@ -78,7 +78,7 @@ body {
 
 .round-button {
     position: fixed;
-    top: 14px;
+    top: 10px;
     right: 20px;
     z-index: 1000;
 }
@@ -87,16 +87,37 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 10px;
-    height: 10px;
+    width: 20px;
+    height: 20px;
     background-color: #007bff;
     color: white;
     font-size: 24px;
-    border-radius: 40%;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: background-color 0.3s ease;
+    border-radius: 60%;
 }
 
 .round-button a:hover {
     background-color: #0056b3;
+}
+.autocomplete-suggestions {
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: white;
+    position: absolute;
+    width: 100%;
+    z-index: 999;
+}
+
+.autocomplete-suggestion {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.autocomplete-suggestion:hover {
+    background-color: #eee;
+}
+
+.search-wrapper {
+    position: relative;
 }
