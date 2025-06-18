@@ -25,7 +25,6 @@ public class Music {
     @JoinColumn(name = "artist_id") // Colonna di chiave esterna nella tabella `Music`
     private Artist artist;
 
-    private String duration;
 
     private String audioFilePath; // <<--- NOME CAMPO COERENTE
     private String fileUrl;
@@ -68,10 +67,6 @@ public class Music {
     public void setAudioFilePath(String audioFilePath) { // Setter coerente con il nome del campo
         this.audioFilePath = audioFilePath;
     }
-
-    public String getDuration() {return duration;}
-
-    public void setDuration(String duration) {this.duration = duration;}
 
     @Override
     public boolean equals(Object o) {

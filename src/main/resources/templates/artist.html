@@ -8,27 +8,28 @@
 <body>
 
 <nav>
-    <a th:href="@{/home}"> < Home </a>
+    <a class="home-button" th:href="@{/home}">Home</a>
 </nav>
+
 <main class="container">
     <div th:if="${artist != null}">
         <h1 th:text="${artist.name}">Nome Artista</h1>
 
-        <!-- immagine (da controllare)
-        <div th:if="${artist.imagePath != null && !artist.imagePath.isEmpty()}">
-            <img th:src="@{'/images/' + ${artist.imagePath}}" alt="Foto di [[${artist.name}]]" />
-        </div> -->
-
+        <div th:if="${artist.photoUrl != null && !artist.photoUrl.isEmpty()}">
+            <img th:src="@{'/artists-photo/' + ${artist.photoUrl}}" alt=""/>
+        </div>
 
         <div th:if="${artist.description != null && !artist.description.isEmpty()}">
             <p><strong>Descrizione:</strong></p>
             <p th:text="${artist.description}">Descrizione artista</p>
         </div>
+
         <div th:if="${artist.description == null || artist.description.isEmpty()}">
             <p>Nessuna descrizione disponibile per questo artista.</p>
         </div>
 
         <div th:if="${artist.musics != null}">
+            <p><strong>Brani artista:</strong></p>
             <div th:each="music : ${artist.musics}">
                 <a th:text="${music.title}" th:href="@{'/music/' + ${music.id}}">musiche</a>
             </div>
@@ -41,5 +42,6 @@
 
     <p><a th:href="@{/artists}">Torna alla lista degli artisti</a></p>
 </main>
+
 </body>
 </html>

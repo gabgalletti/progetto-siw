@@ -11,7 +11,20 @@
 <div class="artist-grid">
     <a class="artist-card" th:each="artist : ${artists}" th:href="@{'/artist/' + ${artist.id}}">
         <div class="artist-image">
-            <img th:src="${artist.imageUrl != null ? artist.imageUrl : '/images/default-artist.png'}" alt="Artista" />
+
+            <!-- Se photoUrl è vuoto: mostra un SVG segnaposto -->
+            <div th:if="${#strings.isEmpty(artist.photoUrl)}">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="#ccc" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 20c0-4 4-6 8-6s8 2 8 6v1H4v-1z"/>
+                </svg>
+            </div>
+
+            <!-- Se photoUrl è presente: mostra l'immagine vera -->
+            <img th:if="${!#strings.isEmpty(artist.photoUrl)}"
+                 th:src="@{'/artists-photo/' + ${artist.photoUrl}}"
+                 alt="Artista" width="80" height="80"/>
+
         </div>
         <div class="artist-name" th:text="${artist.name}">Nome Artista</div>
     </a>

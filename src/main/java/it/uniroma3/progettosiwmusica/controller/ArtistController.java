@@ -26,8 +26,8 @@ import java.util.Optional;
 @Controller
 public class ArtistController {
 
- @Autowired private ArtistService artistService;
- @Autowired private MusicService musicService;
+    @Autowired private ArtistService artistService;
+    @Autowired private MusicService musicService;
 
     @Autowired
     private ArtistRepository artistRepository;
@@ -41,8 +41,8 @@ public class ArtistController {
 
     @PostMapping("/formAddArtist")
     public String handleFormAddArtist(@ModelAttribute Artist artist,
-                                @RequestParam("photo") MultipartFile photo,
-                                Model model) {
+                                      @RequestParam("photo") MultipartFile photo,
+                                      Model model) {
         String artistName = "unknown";
         if(artist.getName() != null)
             artistName = artist.getName();
@@ -56,7 +56,7 @@ public class ArtistController {
             String filename = String.format("%s.%s", artistName, fileExtension);
 
             // Crea il percorso fisico per salvare il file
-            Path uploadPath = Paths.get("C:/Users/Gabriele/Desktop/uploads/artists-photo/");
+            Path uploadPath = Paths.get("C:/Users/vvbla/Desktop/uploads/artists-photo/");
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
@@ -77,7 +77,7 @@ public class ArtistController {
         model.addAttribute("artists", this.artistService.getAllArtists());
         return "artists"; // Assicurati di avere un template artists.html
     }
-    
+
     @GetMapping("/artist/{id}")
     public String getArtist(@PathVariable("id") Long id, Model model) {
         Optional<Artist> artist = this.artistService.getArtistById(id);
