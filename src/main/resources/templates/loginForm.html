@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/style.css"> <!-- Opzionale: aggiungi il tuo CSS -->
+</head>
+<body>
+<div>
+    <h1>Login</h1>
+
+    <!-- Form di login -->
+    <form th:action="@{/login}" method="post">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <!-- Messaggio di errore -->
+        <div th:if="${param.error}">
+            <p style="color:red;">Credenziali non valide. Riprova.</p>
+        </div>
+
+        <!-- Logout riuscito -->
+        <div th:if="${param.logout}">
+            <p style="color:green;">Logout effettuato con successo.</p>
+        </div>
+
+        <div>
+            <button type="submit">Login</button>
+        </div>
+    </form>
+
+    <p>Non hai un account? <a th:href="@{/register}">Registrati qui</a></p>
+</div>
+</body>
+</html>
