@@ -1,9 +1,7 @@
 package it.uniroma3.progettosiwmusica.model;
 
 import jakarta.persistence.*;
-
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")

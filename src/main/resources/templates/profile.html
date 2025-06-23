@@ -6,13 +6,44 @@
   <link rel="stylesheet" th:href="@{/css/profile.css}">
 </head>
 <body>
-<div class="profile-container">
-  <h2>Profilo Utente</h2>
-  <div class="profile-info">
-    <p><strong>ID:</strong> <span th:text="${user.id}"></span></p>
-    <p><strong>Username:</strong> <span th:text="${user.username}"></span></p>
-    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
-  </div>
+<div class="navbar">
+  <span>Informazioni Profilo Utente</span>
 </div>
+
+<!-- Messaggi di feedback -->
+<div th:if="${successMessage}" class="success-message">
+  <p th:text="${successMessage}"></p>
+</div>
+<div th:if="${errorMessage}" class="error-message">
+  <p th:text="${errorMessage}"></p>
+</div>
+
+<p><strong>ID:</strong> <span th:text="${user.id}"></span></p>
+<p><strong>Username:</strong> <span th:text="${credentials.username}"></span></p>
+<p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+
+<!-- logout -->
+<form th:action="@{/logout}" method="post" class="logout-form">
+  <button type="submit" class="logout-button">Logout</button>
+</form>
+
+<div class="navbar">
+  <span>Modifica Informazioni Utente</span>
+</div>
+
+<!-- Form per l'aggiornamento -->
+<form th:action="@{/profile/update}" th:object="${updateData}" method="post">
+  <div>
+    <label for="newUsername">Nuovo Username:</label><br>
+    <input type="text" id="newUsername" th:field="*{newUsername}" placeholder="Inserisci nuovo username"><br><br>
+  </div>
+
+  <div>
+    <label for="newPassword">Nuova Password:</label><br>
+    <input type="password" id="newPassword" th:field="*{newPassword}" placeholder="Inserisci nuova Password"><br><br>
+  </div>
+
+  <button type="submit">Aggiorna Profilo</button>
+</form>
 </body>
 </html>

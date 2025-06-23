@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<!-- 1. Aggiungi il namespace di Spring Security -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title id="artistName" th:object="${artist}" th:text="${name}">Dettaglio Artista</title>
+    <title th:if="${artist != null}" th:text="${artist.name} + ' - Dettaglio Artista'">Dettaglio Artista</title>
+    <title th:if="${artist == null}">Artista Non Trovato</title>
     <link rel="stylesheet" th:href="@{/css/artist.css}">
 </head>
 <body>
@@ -12,27 +14,46 @@
 </nav>
 
 <main class="container">
+    <!-- Messaggi di feedback per l'aggiornamento -->
+    <div th:if="${successMessage}" style="color: green; border: 1px solid green; padding: 10px; margin-bottom: 20px;">
+        <p th:text="${successMessage}"></p>
+    </div>
+
     <div th:if="${artist != null}">
         <h1 th:text="${artist.name}">Nome Artista</h1>
 
+        <!-- ... (sezione foto, descrizione e brani esistente) ... -->
         <div th:if="${artist.photoUrl != null && !artist.photoUrl.isEmpty()}">
-            <img th:src="@{'/artists-photo/' + ${artist.photoUrl}}" alt=""/>
+            <img th:src="@{${artist.photoUrl}}" th:alt="'Foto di ' + ${artist.name}" style="max-width: 300px; height: auto; border-radius: 8px;"/>
         </div>
-
         <div th:if="${artist.description != null && !artist.description.isEmpty()}">
             <p><strong>Descrizione:</strong></p>
             <p th:text="${artist.description}">Descrizione artista</p>
         </div>
-
-        <div th:if="${artist.description == null || artist.description.isEmpty()}">
-            <p>Nessuna descrizione disponibile per questo artista.</p>
+        <div th:if="${artist.musics != null && !artist.musics.isEmpty()}">
+            <p><strong>Brani dell'artista:</strong></p>
+            <ul style="list-style-type: none; padding: 0;">
+                <li th:each="music : ${artist.musics}" style="margin-bottom: 5px;">
+                    <a th:text="${music.title}" th:href="@{'/music/' + ${music.id}}">Titolo Musica</a>
+                </li>
+            </ul>
         </div>
 
-        <div th:if="${artist.musics != null}">
-            <p><strong>Brani artista:</strong></p>
-            <div th:each="music : ${artist.musics}">
-                <a th:text="${music.title}" th:href="@{'/music/' + ${music.id}}">musiche</a>
-            </div>
+
+        <!-- Solo per l'admin -->
+        <div class="admin-edit-section" sec:authorize="hasAuthority('ADMIN')" style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px;">
+            <h3>Modifica Artista (Admin)</h3>
+            <form th:action="@{'/artist/update/' + ${artist.id}}" th:object="${artist}" method="post" style="text-align: left;">
+                <div>
+                    <label for="name">Nome Artista:</label>
+                    <input type="text" id="name" th:field="*{name}" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                </div>
+                <div>
+                    <label for="description">Descrizione:</label>
+                    <textarea id="description" th:field="*{description}" rows="5" style="width: 100%; padding: 8px; margin-bottom: 10px;"></textarea>
+                </div>
+                <button type="submit" class="home-button" style="width: auto; background-color: #28a745;">Salva Modifiche</button>
+            </form>
         </div>
     </div>
 

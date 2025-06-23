@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<!-- 1. Aggiungi il namespace di Spring Security -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
     <meta charset="UTF-8">
     <title th:text="${music != null && music.title != null ? music.title : 'Music Details'}">Music Title</title>
-
     <link rel="stylesheet" th:href="@{/css/music.css}">
 </head>
 <body>
@@ -12,6 +12,11 @@
 </nav>
 
 <main>
+    <!-- Messaggi di feedback per l'aggiornamento -->
+    <div class="centro" th:if="${successMessage}" style="color: green; border: 1px solid green; padding: 10px; margin-bottom: 20px;">
+        <p th:text="${successMessage}"></p>
+    </div>
+
     <div class="centro" th:if="${music != null}">
         <div class="title-container" th:if="${music.title != null}">
             <h2 th:text="${music.title}">Music Title</h2>
@@ -22,24 +27,36 @@
                 <a th:href="@{'/artist/' + ${music.artist.id}}" th:text="${music.artist.name}">Artist Name</a>
             </h3>
         </div>
-
         <div th:if="${music.audioFilePath != null}">
             <audio controls preload="metadata">
                 <source th:src="${music.fileUrl}" type="audio/mpeg">
-                <source th:src="${music.fileUrl}" type="audio/wav">
-                <source th:src="${music.fileUrl}" type="audio/ogg">
                 Your browser does not support the audio element.
             </audio>
+        </div>
+        <div th:if="${music.lyrics != null and not #strings.isEmpty(music.lyrics)}">
+            <h3>Lyrics:</h3>
+            <pre th:text="${music.lyrics}">Lyrics here</pre>
+        </div>
+
+        <!-- visualizzabile solo dagli admin -->
+        <div class="admin-edit-section" sec:authorize="hasAuthority('ADMIN')" style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px;">
+            <h3>Modifica Musica (Admin)</h3>
+            <form th:action="@{'/music/update/' + ${music.id}}" th:object="${music}" method="post" style="text-align: left;">
+                <div>
+                    <label for="title">Titolo:</label>
+                    <input type="text" id="title" th:field="*{title}" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                </div>
+                <div>
+                    <label for="lyrics">Testo:</label>
+                    <textarea id="lyrics" th:field="*{lyrics}" rows="10" style="width: 100%; padding: 8px; margin-bottom: 10px;"></textarea>
+                </div>
+                <button type="submit" style="text-decoration: none; color: white; background-color: #28a745; padding: 10px 15px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer;">Salva Modifiche</button>
+            </form>
         </div>
     </div>
 
     <div class="centro" th:if="${music == null}">
         <p>Music track not found.</p>
-    </div>
-
-    <div class="centro" th:if="${music.lyrics != null and not #strings.isEmpty(music.lyrics)}">
-        <h3>Lyrics:</h3>
-        <pre th:text="${music.lyrics}">Lyrics here</pre>
     </div>
 </main>
 </body>

@@ -34,7 +34,21 @@ public class ArtistService {
         artistRepository.delete(artist);
     }
 
-    public List<Artist> findByNameContainingIgnoreCase(String name) {
-        return artistRepository.findByNameContainingIgnoreCase(name);}
+    public List<Artist> findByNameContainingIgnoreCase(String name) {return artistRepository.findByNameContainingIgnoreCase(name);}
+
+    @Transactional
+    public void updateArtist(Long id, String name, String description) {
+        Artist artist = artistRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid artist Id:" + id));
+        artist.setName(name);
+        artist.setDescription(description);
+    }
+
+    @Transactional
+    public void deleteArtist(Long id) {
+        if (!artistRepository.existsById(id)) {
+            throw new IllegalArgumentException("Artista con ID " + id + " non trovato.");
+        }
+        artistRepository.deleteById(id);
+    }
 
 }
