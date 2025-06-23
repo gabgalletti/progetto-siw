@@ -2,11 +2,11 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #333333;
     color: #333;
 }
 .navbar {
-    background-color: #333;
+    background-color: black;
     color: white;
     padding: 10px 20px;
     display: flex;
@@ -25,6 +25,7 @@ body {
 .container {
     padding: 20px;
     text-align: center;
+    color: white;
 }
 .search-container {
     margin: 20px 0;
@@ -38,7 +39,7 @@ body {
 }
 .search-container button {
     padding: 10px 15px;
-    background-color: #5cb85c;
+    background-color: #4BA34B;
     color: white;
     border: none;
     border-radius: 4px;
@@ -52,7 +53,7 @@ body {
 }
 .nav-buttons a {
     display: inline-block;
-    background-color: #007bff;
+    background-color: #4BA34B;
     color: white;
     padding: 12px 20px;
     margin: 0 10px;
@@ -69,11 +70,14 @@ body {
     padding: 10px;
     border-radius: 4px;
     text-align: center;
+    margin-left: auto;
+    margin-right: auto;
 }
-.search-feedback.info { /* Per messaggi informativi/di errore */
-    background-color: #f8d7da; /* Esempio colore per errore/info */
+.search-feedback.info {
+    background-color: #E6C8C8;
     color: #721c24;
     border: 1px solid #f5c6cb;
+    width: 32%;
 }
 
 .round-button {
@@ -98,26 +102,4 @@ body {
 .round-button a:hover {
     background-color: #0056b3;
 }
-.autocomplete-suggestions {
-    border: 1px solid #ccc;
-    border-top: none;
-    max-height: 200px;
-    overflow-y: auto;
-    background-color: white;
-    position: absolute;
-    width: 100%;
-    z-index: 999;
-}
 
-.autocomplete-suggestion {
-    padding: 10px;
-    cursor: pointer;
-}
-
-.autocomplete-suggestion:hover {
-    background-color: #eee;
-}
-
-.search-wrapper {
-    position: relative;
-}

@@ -2,9 +2,6 @@ package it.uniroma3.progettosiwmusica.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-
-import java.util.ArrayList; // <<--- AGGIUNGI QUESTO IMPORT
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -17,7 +14,7 @@ public class Music {
     @NotBlank
     private String title;
 
-    @Column(columnDefinition = "TEXT") // Buono per testi lunghi se necessario
+    @Column(columnDefinition = "TEXT") // Buono per testi lunghi
     private String lyrics;
 
 
@@ -26,7 +23,7 @@ public class Music {
     private Artist artist;
 
 
-    private String audioFilePath; // <<--- NOME CAMPO COERENTE
+    private String audioFilePath;
     private String fileUrl;
 
     public String getTitle() {
@@ -70,28 +67,22 @@ public class Music {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true; // Aggiunto per efficienza
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Music music = (Music) o;
-        // Per le entità JPA, è spesso meglio basare equals/hashCode solo sull'ID
-        // se l'entità è gestita (ha un ID non nullo).
         if (id != null && music.id != null) {
             return Objects.equals(id, music.id);
         }
-        // Fallback per entità non ancora persistite (usa con cautela nelle collezioni)
-        return Objects.equals(title, music.title); // Modificato per usare solo il titolo come fallback
+        return Objects.equals(title, music.title);
     }
 
     @Override
     public int hashCode() {
-        // Coerente con equals
         if (id != null) {
             return Objects.hash(id);
         }
-        return Objects.hash(title); // Modificato
+        return Objects.hash(title);
     }
-
-
     public void setFileUrl(String fileUrl) {
         this.fileUrl = fileUrl;
     }

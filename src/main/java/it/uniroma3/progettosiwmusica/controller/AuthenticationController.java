@@ -27,8 +27,7 @@ public class AuthenticationController {
     public String login() {
         return "redirect:/success";
     }
-
-
+    
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
         model.addAttribute("user", new User());
@@ -39,7 +38,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public String register(@ModelAttribute User user, @ModelAttribute Credentials credentials) {
         credentials.setUser(user);
-        credentials.setRole(Credentials.DEFAULT_ROLE); // default role
+        credentials.setRole(Credentials.DEFAULT_ROLE);
         credentials.setPassword(passwordEncoder.encode(credentials.getPassword()));
         credentialsService.save(credentials);
         return "redirect:/login";
@@ -47,10 +46,7 @@ public class AuthenticationController {
 
     @GetMapping("/success")
     public String successRedirect() {
-        // reindirizza in base al ruolo
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        //if (auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ADMIN")))
-        //return "redirect:/admin/home";
         return "redirect:/home";
     }
 }

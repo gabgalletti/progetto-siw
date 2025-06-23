@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Artisti</title>
@@ -8,26 +8,40 @@
 <body>
 <h1>Artisti</h1>
 
+<!-- Messaggi di Successo/Errore -->
+<div th:if="${successMessage}" style="color: green; margin-bottom: 15px;">
+    <p th:text="${successMessage}"></p>
+</div>
+<div th:if="${errorMessage}" style="color: red; margin-bottom: 15px;">
+    <p th:text="${errorMessage}"></p>
+</div>
+
 <div class="artist-grid">
-    <a class="artist-card" th:each="artist : ${artists}" th:href="@{'/artist/' + ${artist.id}}">
-        <div class="artist-image">
-
-            <!-- Se photoUrl è vuoto: mostra un SVG segnaposto -->
-            <div th:if="${#strings.isEmpty(artist.photoUrl)}">
-                <svg width="80" height="80" viewBox="0 0 24 24" fill="#ccc" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="8" r="4"/>
-                    <path d="M4 20c0-4 4-6 8-6s8 2 8 6v1H4v-1z"/>
-                </svg>
+    <!-- Wrapper per la card e il pulsante di eliminazione -->
+    <div class="artist-card-wrapper" th:each="artist : ${artists}">
+        <a class="artist-card" th:href="@{'/artist/' + ${artist.id}}">
+            <div class="artist-image">
+                <!-- Se photoUrl è vuoto: mostra un SVG  -->
+                <div th:if="${#strings.isEmpty(artist.photoUrl)}">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="#ccc" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="8" r="4"/>
+                        <path d="M4 20c0-4 4-6 8-6s8 2 8 6v1H4v-1z"/>
+                    </svg>
+                </div>
+                <!-- per mostrare l'immagine vera -->
+                <img th:if="${!#strings.isEmpty(artist.photoUrl)}"
+                     th:src="@{${artist.photoUrl}}"
+                     th:alt="${artist.name}" width="80" height="80"/>
             </div>
-
-            <!-- Se photoUrl è presente: mostra l'immagine vera -->
-            <img th:if="${!#strings.isEmpty(artist.photoUrl)}"
-                 th:src="@{'/artists-photo/' + ${artist.photoUrl}}"
-                 alt="Artista" width="80" height="80"/>
-
+            <div class="artist-name" th:text="${artist.name}">Nome Artista</div>
+        </a>
+        <!-- Pulsante di eliminazione visibile solo agli amministratori -->
+        <div sec:authorize="hasAuthority('ADMIN')" class="admin-actions">
+            <form th:action="@{'/artist/delete/' + ${artist.id}}" method="post" onsubmit="return confirm('Sei sicuro di voler eliminare questo artista? Questa azione è irreversibile e rimuoverà anche tutte le musiche associate.');">
+                <button type="submit" class="delete-button">Elimina</button>
+            </form>
         </div>
-        <div class="artist-name" th:text="${artist.name}">Nome Artista</div>
-    </a>
+    </div>
 </div>
 
 </body>

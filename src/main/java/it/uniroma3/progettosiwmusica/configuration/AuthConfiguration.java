@@ -38,8 +38,12 @@ public class AuthConfiguration {
         http
                 .csrf().disable().cors().disable()
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.GET, "/", "/index", "/register", "/login", "/css/**", "/images/**", "/favicon.ico","/logout"/*,"/formAddArtist/**", "/artists/**", "/searchArtists", "artist/**", "/music/**", "home"*/).permitAll()
-                .requestMatchers(HttpMethod.POST, "/register", "/login", "/logout", "/formAddArtist/**", "/artists/**", "/searchArtists", "artist/**", "/music/**", "home").permitAll()
+                .requestMatchers(HttpMethod.GET, "/", "/index", "/register", "/login", "/css/**", "/images/**", "/favicon.ico","/logout").permitAll()
+                .requestMatchers(HttpMethod.POST, "/register", "/login", "/logout").permitAll()
+
+                // form accessibili solo dagli amministratori
+                .requestMatchers(HttpMethod.GET, "/formAddArtist", "/music/add").hasAuthority("ADMIN")
+
                 .requestMatchers(HttpMethod.GET, "/admin/**").hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()

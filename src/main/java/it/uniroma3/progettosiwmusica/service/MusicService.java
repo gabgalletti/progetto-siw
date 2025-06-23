@@ -31,4 +31,20 @@ public class MusicService {
     public List<Music> findByTitleContainingIgnoreCase(String title) {
         return musicRepository.findByTitleContainingIgnoreCase(title);
     }
+
+    @Transactional
+    public void updateMusic(Long id, String title, String lyrics) {
+        Music music = musicRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid music Id:" + id));
+        music.setTitle(title);
+        music.setLyrics(lyrics);
+    }
+
+    @Transactional
+    public void deleteMusic(Long id) {
+        if (!musicRepository.existsById(id)) {
+            throw new IllegalArgumentException("Musica con ID " + id + " non trovata.");
+        }
+        musicRepository.deleteById(id);
+    }
+
 }

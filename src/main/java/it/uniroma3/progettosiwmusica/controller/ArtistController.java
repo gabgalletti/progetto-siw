@@ -6,6 +6,8 @@ import it.uniroma3.progettosiwmusica.repository.ArtistRepository;
 import it.uniroma3.progettosiwmusica.service.ArtistService;
 import it.uniroma3.progettosiwmusica.service.MusicService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,7 @@ public class ArtistController {
     @Autowired
     private ArtistRepository artistRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(ArtistController.class);
 
     @GetMapping("/formAddArtist")
     public String formAddArtist(Model model) {
@@ -75,7 +78,7 @@ public class ArtistController {
     @GetMapping("/artists")
     public String getAllArtists(Model model) {
         model.addAttribute("artists", this.artistService.getAllArtists());
-        return "artists"; // Assicurati di avere un template artists.html
+        return "artists";
     }
 
     @GetMapping("/artist/{id}")
@@ -96,10 +99,9 @@ public class ArtistController {
             List<Artist> artists = artistService.findByNameContainingIgnoreCase(query);
             return ResponseEntity.ok(artists);
         } catch (Exception e) {
-            // Log per debugging
             System.err.println("Error searching artists: " + e.getMessage());
             e.printStackTrace();
-            // Restituisci un'errore personalizzato
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Unable to fetch artist data");
         }
@@ -141,5 +143,34 @@ public class ArtistController {
             redirectAttributes.addFlashAttribute("searchMessage", "La ricerca per '" + query + "' non ha prodotto un risultato unico e specifico. Prova a essere più preciso o consulta le liste complete.");
         }
         return "redirect:/home";
+    }
+
+    @PostMapping("/artist/update/{id}")
+    public String updateArtist(@PathVariable("id") Long id,
+                               @Valid @ModelAttribute("artist") Artist artistData,
+                               BindingResult bindingResult,
+                               RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Errore nella validazione dei dati.");
+            return "redirect:/artist/" + id;
+        }
+        artistService.updateArtist(id, artistData.getName(), artistData.getDescription());
+
+        redirectAttributes.addFlashAttribute("successMessage", "Artista aggiornato con successo!");
+        return "redirect:/artist/" + id;
+    }
+
+
+    @PostMapping("/artist/delete/{id}")
+    public String deleteArtist(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            artistService.deleteArtist(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Artista eliminato con successo!");
+        } catch (Exception e) {
+            logger.error("Errore durante l'eliminazione dell'artista con ID {}: {}", id, e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Errore durante l'eliminazione dell'artista.");
+        }
+        return "redirect:/artists";
     }
 }

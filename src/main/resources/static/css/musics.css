@@ -16,7 +16,7 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    max-width: 700px;   /* imposta la larghezza massima desiderata */
+    max-width: 700px;
 }
 
 .track {
@@ -39,13 +39,6 @@ h1 {
     gap: 12px;
 }
 
-/*.cover-placeholder img {
-    width: 48px;
-    height: 48px;
-    object-fit: cover;
-    border-radius: 4px;
-} */
-
 .text-info {
     display: flex;
     flex-direction: column;
@@ -67,4 +60,49 @@ h1 {
 .duration {
     font-size: 14px;
     color: #b3b3b3;
+}
+
+.admin-actions {
+    margin-left: 15px;
+}
+
+.delete-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+}
+
+.track-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.track-wrapper:hover {
+    background-color: #2a2a2a;
+}
+
+.track {
+
+    background-color: transparent;
+    padding: 0;
+    flex-grow: 1;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }

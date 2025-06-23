@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Brani</title>
@@ -9,17 +9,32 @@
 
 <h1>Brani</h1>
 
+<!-- Messaggi di Successo/Errore -->
+<div th:if="${successMessage}" style="color: green; margin-bottom: 15px;">
+    <p th:text="${successMessage}"></p>
+</div>
+<div th:if="${errorMessage}" style="color: red; margin-bottom: 15px;">
+    <p th:text="${errorMessage}"></p>
+</div>
+
 <div class="track-list">
-    <a class="track" th:each="music : ${musics}" th:href="@{'/music/' + ${music.id}}">
-        <div class="track-info">
-
-            <div class="text-info">
-                <p class="title" th:text="${music.title}">Titolo</p>
-                <p class="artist" th:text="${music.artist != null ? music.artist.name : 'Sconosciuto'}">Artista</p>
+    <!-- Wrapper per il brano -->
+    <div class="track-wrapper" th:each="music : ${musics}">
+        <a class="track" th:href="@{'/music/' + ${music.id}}">
+            <div class="track-info">
+                <div class="text-info">
+                    <p class="title" th:text="${music.title}">Titolo</p>
+                    <p class="artist" th:text="${music.artist != null ? music.artist.name : 'Sconosciuto'}">Artista</p>
+                </div>
             </div>
+        </a>
+        <!-- Pulsante di eliminazione visibile solo agli amministratori -->
+        <div sec:authorize="hasAuthority('ADMIN')" class="admin-actions">
+            <form th:action="@{'/music/delete/' + ${music.id}}" method="post" onsubmit="return confirm('Sei sicuro di voler eliminare questa musica? Questa azione è irreversibile.');">
+                <button type="submit" class="delete-button">Elimina</button>
+            </form>
         </div>
-
-    </a>
+    </div>
 </div>
 </body>
 </html>
