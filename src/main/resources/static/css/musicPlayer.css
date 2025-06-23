@@ -1,0 +1,95 @@
+/* Stile principale del contenitore */
+.audio-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #283036;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 2em;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    width: 80%;
+    max-width: 1200px;
+}
+.player-button{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2em;
+}
+audio#audioPlayer {
+    display: none;
+}
+/* Controlli audio */
+.audio-controls {
+    display: flex;
+    flex-direction: column; /* Colonne per separare i controlli e la barra */
+    align-items: center;
+    width: 100%;
+    max-width: 1200px; /* Limita la larghezza massima */
+    margin: 20px auto;
+
+}
+
+.control-btn {
+    padding: 10px 15px;
+    color: white;
+    background-color: #283036;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+}
+
+
+.control-btn:hover {
+    background-color: #1a242f;
+}
+.progress-bar-container {
+    width: 100%;
+}
+
+/* Time controls: tempo e barra di progresso */
+.time-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Distribuisce tempo corrente e durata */
+    gap: 15px; /* Spazio tra i contenitori */
+    width: 100%;
+}
+
+.time-controls span {
+    font-size: 14px;
+    color: white;
+    min-width: 40px; /* Per evitare che si restringano troppo */
+}
+
+.time-controls input[type="range"] {
+    flex-grow: 1; /* Utilizza tutto lo spazio rimanente per la barra */
+    margin: 0 10px; /* Spazio tra timer e barra */
+    cursor: pointer;
+    appearance: none; /* Rimuove lo stile di default */
+    background-color: gray;
+    height: 6px;
+    border-radius: 4px;
+    position: relative;
+}
+
+.time-controls input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    background: white;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.time-controls input[type="range"]::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    background: white;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+}

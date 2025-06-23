@@ -15,12 +15,12 @@
 
 <main class="container">
     <!-- Messaggi di feedback per l'aggiornamento -->
-    <div th:if="${successMessage}" style="color: green; border: 1px solid green; padding: 10px; margin-bottom: 20px;">
+    <div th:if="${successMessage}" style="color: #0056b3; border: 1px solid #0056b3; padding: 10px; margin-bottom: 20px;">
         <p th:text="${successMessage}"></p>
     </div>
 
-    <div th:if="${artist != null}">
-        <h1 th:text="${artist.name}">Nome Artista</h1>
+    <div th:if="${artist != null}" style="width: 100%; justify-content: center; flex-direction: column; align-items: center; display: flex">
+        <h2 style="font-size: 40px;" th:text="${artist.name}">Nome Artista</h2>
 
         <!-- ... (sezione foto, descrizione e brani esistente) ... -->
         <div th:if="${artist.photoUrl != null && !artist.photoUrl.isEmpty()}">
@@ -34,25 +34,25 @@
             <p><strong>Brani dell'artista:</strong></p>
             <ul style="list-style-type: none; padding: 0;">
                 <li th:each="music : ${artist.musics}" style="margin-bottom: 5px;">
-                    <a th:text="${music.title}" th:href="@{'/music/' + ${music.id}}">Titolo Musica</a>
+                    <a style="margin-bottom: 1em" th:text="${music.title}" th:href="@{'/music/' + ${music.id}}">Titolo Musica</a>
                 </li>
             </ul>
         </div>
 
 
         <!-- Solo per l'admin -->
-        <div class="admin-edit-section" sec:authorize="hasAuthority('ADMIN')" style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px;">
-            <h3>Modifica Artista (Admin)</h3>
-            <form th:action="@{'/artist/update/' + ${artist.id}}" th:object="${artist}" method="post" style="text-align: left;">
+        <div class="admin-edit-section" sec:authorize="hasAuthority('ADMIN')" style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; width: 80%; text-align: left">
+            <h3 style="color: white">Modifica Artista (Admin)</h3>
+            <form th:action="@{'/artist/update/' + ${artist.id}}" th:object="${artist}" method="post" style="text-align: left; width: 100%">
                 <div>
                     <label for="name">Nome Artista:</label>
-                    <input type="text" id="name" th:field="*{name}" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                    <input class="form" type="text" id="name" th:field="*{name}" required>
                 </div>
                 <div>
                     <label for="description">Descrizione:</label>
-                    <textarea id="description" th:field="*{description}" rows="5" style="width: 100%; padding: 8px; margin-bottom: 10px;"></textarea>
+                    <textarea class="form" id="description" th:field="*{description}" rows="5" ></textarea>
                 </div>
-                <button type="submit" class="home-button" style="width: auto; background-color: #28a745;">Salva Modifiche</button>
+                <button type="submit" class="home-button" style="width: auto; background-color: #0056b3; padding: 10px 15px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer;">Salva Modifiche</button>
             </form>
         </div>
     </div>
@@ -61,7 +61,7 @@
         <p>Artista non trovato.</p>
     </div>
 
-    <p><a th:href="@{/artists}">Torna alla lista degli artisti</a></p>
+    <p><a style="text-decoration: underline; color: white;" th:href="@{/artists}">Torna alla lista degli artisti</a></p>
 </main>
 
 </body>

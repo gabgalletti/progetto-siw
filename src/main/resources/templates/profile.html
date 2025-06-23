@@ -9,7 +9,7 @@
 <div class="navbar">
   <span>Informazioni Profilo Utente</span>
 </div>
-
+<div class="container">
 <!-- Messaggi di feedback -->
 <div th:if="${successMessage}" class="success-message">
   <p th:text="${successMessage}"></p>
@@ -18,7 +18,7 @@
   <p th:text="${errorMessage}"></p>
 </div>
 
-<p><strong>ID:</strong> <span th:text="${user.id}"></span></p>
+
 <p><strong>Username:</strong> <span th:text="${credentials.username}"></span></p>
 <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
 
@@ -45,5 +45,6 @@
 
   <button type="submit">Aggiorna Profilo</button>
 </form>
+</div>
 </body>
 </html>

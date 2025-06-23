@@ -1,16 +1,19 @@
 body {
-    background-color: black;
+    background-color: #121212;
     font-family: Arial;
     display: block;
+    height: 100%;
+    color: white;
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 60px auto 40px auto;
     padding: 40px 20px;
     text-align: center;
-    background-color: #ffffffcc;
+    background-color: #1e1e1e;
     border-radius: 12px;
+    margin-top: 10vh;
 }
 
 nav {
@@ -39,9 +42,33 @@ img {
     margin: 20px 0;
     border-radius: 8px;
 }
+ul a {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    text-decoration: none;
+    color: white;
+    width: 60%;
+    max-width: 400px;
+    border-radius: 15px;
+    padding: 1em;
+    border: 1px solid white;
+}
+ul a:hover {
+    background-color: #2a2a2a;
+}
+p, h2{
+    color: white;
+}
 
-a {
-    color: #004b66;
-    display: block;
-    margin: 10px 0;
+
+.form{
+    width: 100%;
+    background-color: #d1d1d1;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }

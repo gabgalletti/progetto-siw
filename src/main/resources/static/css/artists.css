@@ -11,12 +11,22 @@ h1 {
     font-weight: bold;
     margin-bottom: 24px;
 }
+.container{
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    width: 100%;
 
+}
 .artist-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 24px;
-    width: 80%;
+    max-width: 1200px;  /* oppure un altro valore a tua scelta */
+    margin: 0 auto;     /* centra la griglia orizzontalmente */
+    width: 100%;        /* mantiene la larghezza responsiva */
+
 }
 
 .artist-card {

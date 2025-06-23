@@ -4,34 +4,61 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${music != null && music.title != null ? music.title : 'Music Details'}">Music Title</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/music.css}">
+    <link rel="stylesheet" th:href="@{/css/musicPlayer.css}">
+    <script th:src="@{/js/musicPlayer.js}"></script>
 </head>
 <body>
 <nav>
     <a th:href="@{/home}">Home</a>
 </nav>
 
-<main>
+<main class="container">
     <!-- Messaggi di feedback per l'aggiornamento -->
-    <div class="centro" th:if="${successMessage}" style="color: green; border: 1px solid green; padding: 10px; margin-bottom: 20px;">
+    <div th:if="${successMessage}" style="color: #0056b3; border: 1px solid #0056b3; padding: 10px; margin-bottom: 20px; width: 90%; margin-top: 20px;">
         <p th:text="${successMessage}"></p>
     </div>
 
     <div class="centro" th:if="${music != null}">
-        <div class="title-container" th:if="${music.title != null}">
+        <div class="title" th:if="${music.title != null}">
             <h2 th:text="${music.title}">Music Title</h2>
         </div>
 
         <div th:if="${music.artist != null}">
-            <h3>Artist:
-                <a th:href="@{'/artist/' + ${music.artist.id}}" th:text="${music.artist.name}">Artist Name</a>
+            <h3 style="color: #b3b3b3;">Artist:
+                <a style="text-decoration: none; color: #b3b3b3;" th:href="@{'/artist/' + ${music.artist.id}}" th:text="${music.artist.name}">Artist Name</a>
             </h3>
         </div>
-        <div th:if="${music.audioFilePath != null}">
-            <audio controls preload="metadata">
+        <div th:if="${music.audioFilePath != null}" class="audio-player">
+            <audio id="audioPlayer" controls preload="metadata">
                 <source th:src="${music.fileUrl}" type="audio/mpeg">
                 Your browser does not support the audio element.
             </audio>
+            <div class="audio-controls">
+                <div class="player-button">
+                    <button id="previous" class="control-btn">
+                        <i class="fas fa-backward"></i>
+                    </button>
+                    <button id="playPause" class="control-btn">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button id="next" class="control-btn">
+                        <i class="fas fa-forward"></i>
+                    </button>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="time-controls">
+                        <!-- Tempo Corrente a Sinistra -->
+                        <span id="currentTime">0:00</span>
+                        <!-- Barra di Progresso -->
+                        <input id="progress" type="range" min="0" max="100" step="1" value="0">
+                        <!-- Durata a Destra -->
+                        <span id="duration">0:00</span>
+                    </div>
+                </div>
+
+            </div>
         </div>
         <div th:if="${music.lyrics != null and not #strings.isEmpty(music.lyrics)}">
             <h3>Lyrics:</h3>
@@ -39,25 +66,25 @@
         </div>
 
         <!-- visualizzabile solo dagli admin -->
-        <div class="admin-edit-section" sec:authorize="hasAuthority('ADMIN')" style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px;">
-            <h3>Modifica Musica (Admin)</h3>
-            <form th:action="@{'/music/update/' + ${music.id}}" th:object="${music}" method="post" style="text-align: left;">
+        <div class="admin-edit-section" sec:authorize="hasAuthority('ADMIN')" style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; width: 80%; text-align: left">
+            <h3 style="margin-bottom: 30px">Modifica Musica (Admin)</h3>
+            <form th:action="@{'/music/update/' + ${music.id}}" th:object="${music}" method="post" style="text-align: left; width: 100%">
                 <div>
                     <label for="title">Titolo:</label>
-                    <input type="text" id="title" th:field="*{title}" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                    <input class="form" type="text" id="title" th:field="*{title}" required>
                 </div>
                 <div>
                     <label for="lyrics">Testo:</label>
-                    <textarea id="lyrics" th:field="*{lyrics}" rows="10" style="width: 100%; padding: 8px; margin-bottom: 10px;"></textarea>
+                    <textarea class="form" id="lyrics" th:field="*{lyrics}" rows="10" ></textarea>
                 </div>
-                <button type="submit" style="text-decoration: none; color: white; background-color: #28a745; padding: 10px 15px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer;">Salva Modifiche</button>
+                <button type="submit" style="text-decoration: none; color: white; background-color: #0056b3; padding: 10px 15px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer;">Salva Modifiche</button>
             </form>
         </div>
     </div>
-
-    <div class="centro" th:if="${music == null}">
+    <div th:if="${music == null}">
         <p>Music track not found.</p>
     </div>
+
 </main>
 </body>
 </html>

@@ -1,11 +1,22 @@
 body {
-    font-family: 'Open Sans', sans-serif;
-    background-color: #97B2B8;
+    background-color: #121212;
+    font-family: Arial;
+    height: 100%;
     margin: 0;
-    padding: 40px 20px;
-    color: #333;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
 }
-
+.container {
+    max-width: 1200px;
+    margin: 60px auto 40px auto;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #ffffffcc;
+    border-radius: 12px;
+}
 nav {
     position: absolute;
     top: 20px;
@@ -31,38 +42,51 @@ main {
 }
 
 .centro {
-    max-width: 800px;
+    /*max-width: 1200px;*/
     margin: 0 auto;
+    width: 100%;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .centro > * {
     margin-bottom: 30px;
 }
+.title {
+    margin-bottom: 1.2em;
+    font-size: 40px;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #1e1e1e;
 
-.title-container {
-    background-color: #ffffffaa;
-    padding: 20px;
+    padding: 0;
     border-radius: 10px;
-    margin: 0 auto 30px auto;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
-    /* per stringere il conainer del titolo */
-    width: 60%;
-    max-width: 400px;
+
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 10vh;
+
     text-align: center;
     line-height: 0;
 }
 
 h2, h3 {
     margin-bottom: 10px;
-    color: #2c3e50;
+    color: white;
 }
 
 audio {
-    width: 50%;
-    max-width: 600px;
-    margin-top: 10px;
+    width: 100%;
+    margin-top: 1em;
 }
 
 pre {
@@ -73,4 +97,14 @@ pre {
     text-align: left;
     font-size: 16px;
     line-height: 1.5;
+    color: #333;
+}
+
+.form{
+    width: 100%;
+    background-color: #d1d1d1;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
