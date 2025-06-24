@@ -26,8 +26,8 @@
         </div>
 
         <div th:if="${music.artist != null}">
-            <h3 style="color: #b3b3b3;">Artist:
-                <a style="text-decoration: none; color: #b3b3b3;" th:href="@{'/artist/' + ${music.artist.id}}" th:text="${music.artist.name}">Artist Name</a>
+            <h3 style="color: #b3b3b3;">Artista:
+                <a style="text-decoration: none; color: #b3b3b3;" th:href="@{'/artist/' + ${music.artist.id}}" th:text="${music.artist.name}">Nome artista</a>
             </h3>
         </div>
         <div th:if="${music.audioFilePath != null}" class="audio-player">
@@ -61,7 +61,7 @@
             </div>
         </div>
         <div th:if="${music.lyrics != null and not #strings.isEmpty(music.lyrics)}">
-            <h3>Lyrics:</h3>
+            <h3>Testo:</h3>
             <pre th:text="${music.lyrics}">Lyrics here</pre>
         </div>
 

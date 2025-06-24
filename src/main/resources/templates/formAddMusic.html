@@ -4,99 +4,10 @@
     <title>Add New Music</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/css/formAddMusic.css}">
-    <!--<style>
-        .error { color: red; }
-        .success { color: green; }
-
-        .search-container {
-            position: relative;
-            margin-bottom: 10px;
-        }
-
-        #artistList {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            border: 1px solid #ccc;
-            position: absolute;
-            background-color: white;
-            z-index: 1000;
-            width: 100%;
-            max-height: 200px;
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
-
-        #artistList li {
-            padding: 8px 12px;
-            cursor: pointer;
-        }
-
-        #artistList li:hover {
-            background-color: #f0f0f0;
-        }
-
-        #artistList li.selected {
-            background-color: #007bff;
-            color: white;
-        }
-
-        #artistList li.add-new-artist-dropdown-item {
-            font-weight: bold;
-            color: #007bff;
-            border-bottom: 1px solid #eee;
-        }
-        #artistList li.add-new-artist-dropdown-item:hover {
-            background-color: #e9ecef;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            position: relative;
-            border-radius: 8px;
-        }
-
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        #artistSelectionErrorContainer .error {
-            margin-top: 5px;
-        }
-    </style>-->
 
 </head>
 <body>
-<h1>Add New Music</h1>
+<h1>Aggiungi Una Nuova Musica</h1>
 
 <!-- Messaggi di feedback -->
 <div th:if="${errorMessage}" class="error">
@@ -110,17 +21,17 @@
 
     <!-- Campi Musica -->
     <div>
-        <label for="title">Title:</label>
+        <label for="title">Titolo:</label>
         <input type="text" id="title" th:field="*{title}" required>
         <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error"></span>
     </div>
     <div>
-        <label for="lyrics">Lyrics:</label>
+        <label for="lyrics">Testo:</label>
         <textarea id="lyrics" th:field="*{lyrics}"></textarea>
         <span th:if="${#fields.hasErrors('lyrics')}" th:errors="*{lyrics}" class="error"></span>
     </div>
     <div>
-        <label for="audioFile">Audio File (MP3, WAV, OGG):</label>
+        <label for="audioFile">File Audio:</label>
         <input type="file" id="audioFile" name="audioFile" accept=".mp3,.wav,.ogg" required>
         <span th:if="${#fields.hasErrors('audioFilePath')}" th:errors="*{audioFilePath}" class="error"></span>
     </div>
@@ -131,7 +42,7 @@
 
     <!-- Sezione Ricerca Artista -->
     <div class="search-container">
-        <label for="artistSearch">Search Existing Artist or Add New:</label>
+        <label for="artistSearch">Cerca un artista esistente:</label>
         <input type="text" id="artistSearch" placeholder="Type to search or click '+' in list..." autocomplete="off">
         <ul id="artistList" style="display: none;"></ul>
         <div id="artistSelectionErrorContainer"></div>
@@ -146,21 +57,21 @@
         <div class="modal-content">
             <span class="close-button" onclick="closeNewArtistModal()">&times;</span>
             <div id="newArtistFieldsContainer" th:object="${newArtist}">
-                <h3>Add New Artist Details</h3>
+                <h3>Dettagli nuovo Artista</h3>
                 <div>
-                    <label for="newArtistName">Name:</label>
+                    <label for="newArtistName">Nome:</label>
                     <input type="text" id="newArtistName" th:field="*{name}" placeholder="Enter artist name..." autocomplete="off" pattern=".*\S.*" title="Name cannot be empty or contain only spaces.">
                 </div>
                 <div>
-                    <label for="photo">Photo (JPG, PNG, JPEG):</label>
+                    <label for="photo">Immagine:</label>
                     <input type="file" id="photo" name="photo" accept=".jpg,.png,.jpeg">
                     <span th:if="${#fields.hasErrors('photoPath')}" th:errors="*{photoPath}" class="error"></span>
                 </div>
                 <div>
-                    <label for="newArtistDescription">Description:</label>
+                    <label for="newArtistDescription">Descrizione:</label>
                     <textarea id="newArtistDescription" th:field="*{description}" placeholder="Enter artist description..."></textarea>
                 </div>
-                <button type="button" id="confirmNewArtistBtn" style="margin-top: 15px; padding: 8px 15px;">Confirm New Artist</button>
+                <button type="button" id="confirmNewArtistBtn" style="margin-top: 15px; padding: 8px 15px;">Conferma nuovo Artista</button>
             </div>
         </div>
     </div>
@@ -381,7 +292,7 @@
 
     </script>
     <div>
-        <button type="submit" id="submitBtn">Submit</button>
+        <button type="submit" id="submitBtn">Salva</button>
     </div>
 </form>
 
