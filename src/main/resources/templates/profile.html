@@ -10,41 +10,42 @@
   <span>Informazioni Profilo Utente</span>
 </div>
 <div class="container">
-<!-- Messaggi di feedback -->
-<div th:if="${successMessage}" class="success-message">
-  <p th:text="${successMessage}"></p>
-</div>
-<div th:if="${errorMessage}" class="error-message">
-  <p th:text="${errorMessage}"></p>
-</div>
-
-
-<p><strong>Username:</strong> <span th:text="${credentials.username}"></span></p>
-<p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
-
-<!-- logout -->
-<form th:action="@{/logout}" method="post" class="logout-form">
-  <button type="submit" class="logout-button">Logout</button>
-</form>
-
-<div class="navbar">
-  <span>Modifica Informazioni Utente</span>
-</div>
-
-<!-- Form per l'aggiornamento -->
-<form th:action="@{/profile/update}" th:object="${updateData}" method="post">
-  <div>
-    <label for="newUsername">Nuovo Username:</label><br>
-    <input type="text" id="newUsername" th:field="*{newUsername}" placeholder="Inserisci nuovo username"><br><br>
+  <!-- Messaggi di feedback -->
+  <div th:if="${successMessage}" class="success-message">
+    <p th:text="${successMessage}"></p>
+  </div>
+  <div th:if="${errorMessage}" class="error-message">
+    <p th:text="${errorMessage}"></p>
   </div>
 
-  <div>
-    <label for="newPassword">Nuova Password:</label><br>
-    <input type="password" id="newPassword" th:field="*{newPassword}" placeholder="Inserisci nuova Password"><br><br>
+  <p><strong>Nome:</strong> <span th:text="${user.name}"></span></p>
+  <p><strong>Cognome:</strong> <span th:text="${user.surname}"></span></p>
+  <p><strong>Username:</strong> <span th:text="${credentials.username}"></span></p>
+  <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+
+  <!-- logout -->
+  <form th:action="@{/logout}" method="post" class="logout-form" onsubmit="return confirm('Sei sicuro di voler effettuare il logout?');">
+    <button type="submit" class="logout-button">Logout</button>
+  </form>
+
+  <div class="navbar">
+    <span>Modifica Informazioni Utente</span>
   </div>
 
-  <button type="submit">Aggiorna Profilo</button>
-</form>
+  <!-- Form per l'aggiornamento -->
+  <form th:action="@{/profile/update}" th:object="${updateData}" method="post" onsubmit="return confirm('Sei sicuro di voler aggiornare le informazioni del tuo profilo?');">
+    <div>
+      <label for="newUsername">Nuovo Username:</label><br>
+      <input type="text" id="newUsername" th:field="*{newUsername}" placeholder="Inserisci nuovo username"><br><br>
+    </div>
+
+    <div>
+      <label for="newPassword">Nuova Password:</label><br>
+      <input type="password" id="newPassword" th:field="*{newPassword}" placeholder="Inserisci nuova Password"><br><br>
+    </div>
+
+    <button type="submit">Aggiorna Profilo</button>
+  </form>
 </div>
 </body>
 </html>

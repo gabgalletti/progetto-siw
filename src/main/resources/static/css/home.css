@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #121212;
+    background-color: #041426;
     color: #333;
 }
 .navbar {
@@ -83,8 +83,6 @@ body {
     width: 32%;
 }
 
-
-
 .round-button a {
     display: flex;
     align-items: center;
@@ -92,7 +90,7 @@ body {
     font-size: 16px;
     border-radius: 50%;
     padding: 5px;
-    background-color: #121212;
+    background-color: #313147;
 }
 
 .round-button a:hover {
@@ -102,3 +100,12 @@ body {
 
 }
 
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.admin-nav-links a {
+    margin-left: 15px;
+}

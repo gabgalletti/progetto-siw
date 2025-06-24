@@ -12,19 +12,21 @@
 
     <span>MusicApp</span>
 
-    <!--  Solo per gli amministratori ===== -->
-    <div class="admin-nav-links" sec:authorize="hasAuthority('ADMIN')">
-        <a th:href="@{/music/add}">Aggiungi Musica</a>
-        <a th:href="@{/formAddArtist}">Aggiungi Artista</a>
-    </div>
+    <!-- navbar per gli elementi di destra ("Aggiungi ...")-->
+    <div class="navbar-right">
+        <!--  Solo per gli amministratori -->
+        <div class="admin-nav-links" sec:authorize="hasAuthority('ADMIN')">
+            <a th:href="@{/music/add}">Aggiungi Musica</a>
+            <a th:href="@{/formAddArtist}">Aggiungi Artista</a>
+        </div>
 
-
-    <div class="round-button">
-        <a th:href="@{/profile}" title="Profilo Utente">
-            <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" fill="#fff" viewBox="0 0 24 24">
-                <path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/>
-            </svg>
-        </a>
+        <div class="round-button">
+            <a th:href="@{/profile}" title="Profilo Utente">
+                <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" fill="#fff" viewBox="0 0 24 24">
+                    <path d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 12c-4.418 0-8 2.239-8 5v3h16v-3c0-2.761-3.582-5-8-5z"/>
+                </svg>
+            </a>
+        </div>
     </div>
 
 </div>

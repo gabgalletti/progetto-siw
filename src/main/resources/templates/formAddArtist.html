@@ -14,11 +14,11 @@
         <input type="text" id="name" th:field="*{name}" />
     </div>
     <div>
-        <label for="photo">Photo (JPG, PNG, JPEG):</label>
+        <label for="photo">Seleziona Foto:</label>
         <input type="file" id="photo" name="photo" accept=".jpg,.png,.jpeg" required>
         <span th:if="${#fields.hasErrors('photoPath')}" th:errors="*{photoPath}" class="error"></span>
     </div>
-    <div>
+    <div class="description-block">
         <label for="description">Descrizione:</label>
         <textarea id="description" th:field="*{description}"></textarea>
     </div>
